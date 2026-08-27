@@ -1,0 +1,21 @@
+# Feature Workflow
+
+UNDERSTAND
+↓
+INSPECT
+↓
+IDENTIFY SCOPE
+↓
+PLAN
+↓
+IMPLEMENT
+↓
+VALIDATE
+↓
+TEST
+↓
+REGRESSION CHECK
+↓
+REQUIREMENT REVIEW
+
+Use the smallest correct change.
