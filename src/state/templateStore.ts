@@ -238,7 +238,13 @@ export const useTemplateStore = create<TemplateState>((set, get) => {
             ? { ...targetElement.baseProperties }
             : { ...(targetElement.viewportOverrides[fullCommand.viewportScope] || {}) };
 
-        const updatedElement = applyScopePatchToElement(targetElement, fullCommand.viewportScope, patch);
+        const isRestore = fullCommand.source === 'restore';
+        const updatedElement = applyScopePatchToElement(
+          targetElement,
+          fullCommand.viewportScope,
+          patch,
+          isRestore
+        );
         newElements[targetId] = updatedElement;
 
         const nextState =

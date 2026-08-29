@@ -3,6 +3,11 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
   Sliders,
   Sparkles,
   Palette,
@@ -11,6 +16,8 @@ import {
   Settings,
   Zap,
   Box,
+  RotateCcw,
+  Type,
 } from 'lucide-react';
 import { useTemplateStore } from '../../state/templateStore';
 import { getScopeSpecificProperties, resolveElementProperties } from '../../engine/resolution';
@@ -101,7 +108,79 @@ export const PropertyPanel: React.FC = () => {
     });
   };
 
-  // Preset themes
+  const handleResetTypography = () => {
+    const resetTypographyStyle: Record<string, any> = {
+      fontWeight: undefined,
+      fontStyle: undefined,
+      textDecoration: undefined,
+      fontSize: undefined,
+      lineHeight: undefined,
+      letterSpacing: undefined,
+      textAlign: undefined,
+      textTransform: undefined,
+      color: undefined,
+    };
+
+    executeCommand({
+      source: 'restore',
+      targetIds: [primaryElementId],
+      viewportScope: activeEditScope,
+      changes: {
+        [primaryElementId]: {
+          style: resetTypographyStyle,
+        },
+      },
+    });
+  };
+
+  const handleResetColor = (colorProperty: 'backgroundColor' | 'color' | 'borderColor') => {
+    executeCommand({
+      source: 'restore',
+      targetIds: [primaryElementId],
+      viewportScope: activeEditScope,
+      changes: {
+        [primaryElementId]: {
+          style: {
+            [colorProperty]: undefined,
+          },
+        },
+      },
+    });
+  };
+
+  const handleResetThemeColors = () => {
+    executeCommand({
+      source: 'restore',
+      targetIds: [primaryElementId],
+      viewportScope: activeEditScope,
+      changes: {
+        [primaryElementId]: {
+          style: {
+            backgroundColor: undefined,
+            color: undefined,
+            borderColor: undefined,
+          },
+        },
+      },
+    });
+  };
+
+  const formatColorForPicker = (val: string | undefined): string => {
+    if (!val) return '#000000';
+    const trimmed = val.trim().toLowerCase();
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(trimmed)) {
+      if (trimmed.length === 4) {
+        return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`;
+      }
+      return trimmed;
+    }
+    return '#000000';
+  };
+
+  const isTextElement = element
+    ? ['heading', 'paragraph', 'button', 'card', 'text', 'label', 'badge'].includes(element.type)
+    : false;
+
   const colorPresets = [
     { label: 'Pure Black', bg: '#000000', text: '#ffffff' },
     { label: 'Dark Graphite', bg: '#0c0d12', text: '#f3f3f3' },
@@ -111,74 +190,74 @@ export const PropertyPanel: React.FC = () => {
   ];
 
   return (
-    <aside className="w-80 bg-[#050508]/90 backdrop-blur-xl border-l border-white/10 flex flex-col select-none text-slate-200 z-30 shadow-2xl overflow-y-auto relative">
-      {/* Inspector Webflow Studio Top Tabs */}
-      <div className="flex items-center border-b border-white/10 bg-[#000000]/40 p-1">
+    <aside className="w-80 bg-[#0A0A0A] backdrop-blur-xl border-l border-[#222222] flex flex-col h-full min-h-0 overflow-hidden select-none text-slate-200 z-30 shadow-2xl relative">
+      {/* 1. Fixed Inspector Header Tabs */}
+      <div className="flex items-center border-b border-[#242424] bg-[#0A0A0A] p-1 shrink-0">
         <button
           onClick={() => setActiveInspectorTab('style')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
             activeInspectorTab === 'style'
-              ? 'bg-white/10 text-white shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#242424] text-white shadow border border-[#444444]'
+              : 'text-neutral-400 hover:text-neutral-200'
           }`}
         >
-          <Sliders className="w-3.5 h-3.5 text-slate-400" />
+          <Sliders className="w-3.5 h-3.5 text-neutral-400" />
           <span>Style</span>
         </button>
         <button
           onClick={() => setActiveInspectorTab('settings')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
             activeInspectorTab === 'settings'
-              ? 'bg-white/10 text-white shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#242424] text-white shadow border border-[#444444]'
+              : 'text-neutral-400 hover:text-neutral-200'
           }`}
         >
-          <Settings className="w-3.5 h-3.5 text-slate-400" />
+          <Settings className="w-3.5 h-3.5 text-neutral-400" />
           <span>Settings</span>
         </button>
         <button
           onClick={() => setActiveInspectorTab('interactions')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
             activeInspectorTab === 'interactions'
-              ? 'bg-white/10 text-white shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#242424] text-white shadow border border-[#444444]'
+              : 'text-neutral-400 hover:text-neutral-200'
           }`}
         >
-          <Zap className="w-3.5 h-3.5 text-slate-400" />
+          <Zap className="w-3.5 h-3.5 text-neutral-400" />
           <span>Interactions</span>
         </button>
       </div>
 
-      {/* Selected Element Header */}
-      <div className="p-3 border-b border-white/10 bg-[#000000]/30 flex items-center justify-between">
+      {/* 2. Fixed Selected Element Header */}
+      <div className="p-3 border-b border-[#242424] bg-[#111111] flex items-center justify-between shrink-0">
         <div>
           <h4 className="font-bold text-xs text-white truncate max-w-[180px]">{element.label}</h4>
-          <p className="text-[10px] font-mono text-slate-400">Selector: .{element.id}</p>
+          <p className="text-[10px] font-mono text-neutral-400">Selector: .{element.id}</p>
         </div>
-        <span className="text-[10px] font-mono uppercase bg-[#2a2a32] text-slate-200 px-2 py-0.5 rounded border border-white/20">
+        <span className="text-[10px] font-mono uppercase bg-[#171717] text-neutral-200 px-2 py-0.5 rounded border border-[#3A3A3A]">
           {activeEditScope}
         </span>
       </div>
 
-      {/* Style Tab Content */}
+      {/* 3. Primary Scrollable Inspector Content Area */}
       {activeInspectorTab === 'style' && (
-        <div className="p-3 space-y-4 text-xs">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-4 text-xs">
           {/* Content Section */}
           {element.type === 'heading' && (
             <div
               onMouseEnter={() => setHoveredPropertyInfo('Heading Content: Edit main title text for current scope.')}
               onMouseLeave={() => setHoveredPropertyInfo(null)}
-              className="space-y-2 border-b border-white/10 pb-3"
+              className="space-y-2 border-b border-[#262626] pb-3"
             >
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+              <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-1">
                 <span>Heading Text</span>
-                <Info className="w-3 h-3 text-slate-500" />
+                <Info className="w-3 h-3 text-neutral-500" />
               </label>
               <textarea
                 rows={2}
                 value={scopeSpecificProps?.content?.text ?? resolvedProps?.content?.text ?? ''}
                 onChange={(e) => handleTextChange(e.target.value)}
-                className="w-full bg-[#000000]/60 border border-white/15 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-white/40 font-sans"
+                className="w-full bg-[#111111] border border-[#303030] rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-[#707070] font-sans"
               />
             </div>
           )}
@@ -187,17 +266,17 @@ export const PropertyPanel: React.FC = () => {
             <div
               onMouseEnter={() => setHoveredPropertyInfo('Button Label: Edit CTA button text for current scope.')}
               onMouseLeave={() => setHoveredPropertyInfo(null)}
-              className="space-y-2 border-b border-white/10 pb-3"
+              className="space-y-2 border-b border-[#262626] pb-3"
             >
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+              <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-1">
                 <span>Button Label</span>
-                <Info className="w-3 h-3 text-slate-500" />
+                <Info className="w-3 h-3 text-neutral-500" />
               </label>
               <input
                 type="text"
                 value={scopeSpecificProps?.content?.text ?? resolvedProps?.content?.text ?? ''}
                 onChange={(e) => handleTextChange(e.target.value)}
-                className="w-full bg-[#000000]/60 border border-white/15 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-white/40 font-sans"
+                className="w-full bg-[#111111] border border-[#303030] rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-[#707070] font-sans"
               />
             </div>
           )}
@@ -206,111 +285,403 @@ export const PropertyPanel: React.FC = () => {
             <div
               onMouseEnter={() => setHoveredPropertyInfo('Card Content: Edit badge category and description text.')}
               onMouseLeave={() => setHoveredPropertyInfo(null)}
-              className="space-y-2 border-b border-white/10 pb-3"
+              className="space-y-2 border-b border-[#262626] pb-3"
             >
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+              <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-1">
                 <span>Card Badge & Text</span>
-                <Info className="w-3 h-3 text-slate-500" />
+                <Info className="w-3 h-3 text-neutral-500" />
               </label>
               <input
                 type="text"
                 placeholder="Badge Text"
                 value={scopeSpecificProps?.content?.badgeText ?? resolvedProps?.content?.badgeText ?? ''}
                 onChange={(e) => handleBadgeChange(e.target.value)}
-                className="w-full bg-[#000000]/60 border border-white/15 rounded-lg p-2 text-xs text-slate-100 mb-2 focus:outline-none focus:border-white/40"
+                className="w-full bg-[#111111] border border-[#303030] rounded-lg p-2 text-xs text-neutral-100 mb-2 focus:outline-none focus:border-[#707070]"
               />
               <textarea
                 rows={2}
                 value={scopeSpecificProps?.content?.text ?? resolvedProps?.content?.text ?? ''}
                 onChange={(e) => handleTextChange(e.target.value)}
-                className="w-full bg-[#000000]/60 border border-white/15 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-white/40"
+                className="w-full bg-[#111111] border border-[#303030] rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-[#707070]"
               />
             </div>
           )}
 
-          {/* Webflow Spacing Box Model Widget */}
-          <div
-            onMouseEnter={() => setHoveredPropertyInfo('Box Model Spacing: Modify element padding bounds.')}
-            onMouseLeave={() => setHoveredPropertyInfo(null)}
-            className="space-y-2 border-b border-white/10 pb-3"
-          >
-            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              <span className="flex items-center gap-1">
-                <span>Spacing (Padding)</span>
-                <Info className="w-3 h-3 text-slate-500" />
-              </span>
-              <Box className="w-3.5 h-3.5 text-slate-500" />
-            </div>
+          {/* Advanced Typography Controls Section */}
+          {isTextElement && (
+            <div
+              onMouseEnter={() =>
+                setHoveredPropertyInfo(
+                  'Typography Controls: Fine-tune font family, size, weight, line height, letter spacing, alignment, and text transform for active scope.'
+                )
+              }
+              onMouseLeave={() => setHoveredPropertyInfo(null)}
+              className="space-y-3 border-b border-[#262626] pb-4"
+            >
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-semibold text-neutral-300 uppercase tracking-wider flex items-center gap-1">
+                  <Type className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Typography</span>
+                </label>
+                <button
+                  onClick={handleResetTypography}
+                  title="Reset Typography for current scope"
+                  className="flex items-center gap-1 text-[10px] font-mono text-neutral-400 hover:text-white bg-[#171717] hover:bg-[#242424] px-2 py-0.5 rounded border border-[#333333] transition-all cursor-pointer"
+                >
+                  <RotateCcw className="w-2.5 h-2.5" />
+                  <span>Reset</span>
+                </button>
+              </div>
 
-            {/* Box Model Visual Box */}
-            <div className="p-3 bg-[#000000]/80 border border-white/15 rounded-xl flex flex-col items-center gap-2">
-              <span className="text-[10px] text-slate-500 font-mono">PADDING</span>
-              <div className="w-full grid grid-cols-3 gap-1 text-center font-mono text-[10px]">
-                <div></div>
-                <input
-                  type="text"
-                  placeholder="24px"
-                  value={resolvedProps?.style?.padding || '24px'}
-                  onChange={(e) => handleStyleChange('padding', e.target.value)}
-                  className="bg-[#12131a] border border-white/15 rounded px-1.5 py-1 text-center text-slate-200 focus:outline-none"
-                />
-                <div></div>
+              {/* Font Family */}
+              <div>
+                <span className="text-[10px] text-neutral-400 font-mono block mb-1">Font Family</span>
+                <select
+                  value={scopeSpecificProps?.style?.fontFamily ?? resolvedProps?.style?.fontFamily ?? 'sans-serif'}
+                  onChange={(e) => handleStyleChange('fontFamily', e.target.value)}
+                  className="w-full bg-[#111111] text-neutral-200 border border-[#303030] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#707070] cursor-pointer font-sans"
+                >
+                  <option value="sans-serif">System Sans-Serif</option>
+                  <option value="'Inter', sans-serif">Inter</option>
+                  <option value="'Roboto', sans-serif">Roboto</option>
+                  <option value="'Outfit', sans-serif">Outfit</option>
+                  <option value="monospace">Monospace / Code</option>
+                  <option value="serif">Serif</option>
+                </select>
+              </div>
+
+              {/* Font Size & Font Weight */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Font Size</span>
+                  <div className="flex items-center bg-[#111111] border border-[#303030] rounded-lg px-2 py-1">
+                    <input
+                      type="number"
+                      min="1"
+                      max="200"
+                      value={
+                        parseInt(String(scopeSpecificProps?.style?.fontSize ?? resolvedProps?.style?.fontSize ?? '16')) || 16
+                      }
+                      onChange={(e) => {
+                        const val = Math.max(1, parseInt(e.target.value) || 16);
+                        handleStyleChange('fontSize', `${val}px`);
+                      }}
+                      className="w-full bg-transparent text-xs text-neutral-100 focus:outline-none font-mono"
+                    />
+                    <span className="text-[10px] font-mono text-neutral-500">px</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Font Weight</span>
+                  <select
+                    value={scopeSpecificProps?.style?.fontWeight ?? resolvedProps?.style?.fontWeight ?? '400'}
+                    onChange={(e) => handleStyleChange('fontWeight', e.target.value)}
+                    className="w-full bg-[#111111] text-neutral-200 border border-[#303030] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#707070] cursor-pointer font-mono"
+                  >
+                    <option value="100">Thin (100)</option>
+                    <option value="200">Extra Light (200)</option>
+                    <option value="300">Light (300)</option>
+                    <option value="400">Normal (400)</option>
+                    <option value="500">Medium (500)</option>
+                    <option value="600">Semi Bold (600)</option>
+                    <option value="700">Bold (700)</option>
+                    <option value="800">Extra Bold (800)</option>
+                    <option value="900">Black (900)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Font Style & Text Decoration */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Font Style</span>
+                  <div className="flex items-center bg-[#111111] p-0.5 rounded-lg border border-[#303030]">
+                    <button
+                      onClick={() => handleStyleChange('fontStyle', 'normal')}
+                      className={`flex-1 py-1 text-xs font-semibold rounded flex items-center justify-center gap-1 transition-all ${
+                        (scopeSpecificProps?.style?.fontStyle ?? resolvedProps?.style?.fontStyle ?? 'normal') ===
+                        'normal'
+                          ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <span>Normal</span>
+                    </button>
+                    <button
+                      onClick={() => handleStyleChange('fontStyle', 'italic')}
+                      className={`flex-1 py-1 text-xs font-semibold rounded flex items-center justify-center gap-1 transition-all ${
+                        (scopeSpecificProps?.style?.fontStyle ?? resolvedProps?.style?.fontStyle) === 'italic'
+                          ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <Italic className="w-3 h-3" />
+                      <span>Italic</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Text Decoration</span>
+                  <div className="flex items-center bg-[#111111] p-0.5 rounded-lg border border-[#303030]">
+                    <button
+                      onClick={() => handleStyleChange('textDecoration', 'none')}
+                      title="None"
+                      className={`flex-1 py-1 text-xs font-semibold rounded transition-all ${
+                        (scopeSpecificProps?.style?.textDecoration ?? resolvedProps?.style?.textDecoration ?? 'none') ===
+                        'none'
+                          ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      None
+                    </button>
+                    <button
+                      onClick={() => handleStyleChange('textDecoration', 'underline')}
+                      title="Underline"
+                      className={`flex-1 py-1 text-xs font-semibold rounded flex items-center justify-center transition-all ${
+                        (scopeSpecificProps?.style?.textDecoration ?? resolvedProps?.style?.textDecoration) ===
+                        'underline'
+                          ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <Underline className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleStyleChange('textDecoration', 'line-through')}
+                      title="Line Through"
+                      className={`flex-1 py-1 text-xs font-semibold rounded flex items-center justify-center transition-all ${
+                        (scopeSpecificProps?.style?.textDecoration ?? resolvedProps?.style?.textDecoration) ===
+                        'line-through'
+                          ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <Strikethrough className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Line Height & Letter Spacing */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Line Height</span>
+                  <input
+                    type="text"
+                    placeholder="1.4"
+                    value={scopeSpecificProps?.style?.lineHeight ?? resolvedProps?.style?.lineHeight ?? ''}
+                    onChange={(e) => handleStyleChange('lineHeight', e.target.value)}
+                    className="w-full bg-[#111111] text-neutral-200 border border-[#303030] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#707070] font-mono"
+                  />
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Letter Spacing</span>
+                  <input
+                    type="text"
+                    placeholder="0px"
+                    value={scopeSpecificProps?.style?.letterSpacing ?? resolvedProps?.style?.letterSpacing ?? ''}
+                    onChange={(e) => handleStyleChange('letterSpacing', e.target.value)}
+                    className="w-full bg-[#111111] text-neutral-200 border border-[#303030] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#707070] font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Text Alignment & Text Transform */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Text Alignment</span>
+                  <div className="grid grid-cols-4 gap-0.5 bg-[#111111] p-0.5 rounded-lg border border-[#303030]">
+                    {(['left', 'center', 'right', 'justify'] as const).map((align) => {
+                      const isActive =
+                        (scopeSpecificProps?.style?.textAlign ?? resolvedProps?.style?.textAlign ?? 'left') === align;
+                      return (
+                        <button
+                          key={align}
+                          onClick={() => handleStyleChange('textAlign', align)}
+                          title={`Align ${align}`}
+                          className={`py-1 rounded flex items-center justify-center transition-all ${
+                            isActive
+                              ? 'bg-[#242424] text-white shadow border border-[#555555]'
+                              : 'text-neutral-400 hover:text-neutral-200'
+                          }`}
+                        >
+                          {align === 'left' && <AlignLeft className="w-3.5 h-3.5" />}
+                          {align === 'center' && <AlignCenter className="w-3.5 h-3.5" />}
+                          {align === 'right' && <AlignRight className="w-3.5 h-3.5" />}
+                          {align === 'justify' && <AlignJustify className="w-3.5 h-3.5" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-neutral-400 font-mono block mb-1">Text Transform</span>
+                  <select
+                    value={scopeSpecificProps?.style?.textTransform ?? resolvedProps?.style?.textTransform ?? 'none'}
+                    onChange={(e) => handleStyleChange('textTransform', e.target.value)}
+                    className="w-full bg-[#111111] text-neutral-200 border border-[#303030] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#707070] cursor-pointer"
+                  >
+                    <option value="none">None</option>
+                    <option value="uppercase">UPPERCASE</option>
+                    <option value="lowercase">lowercase</option>
+                    <option value="capitalize">Capitalize</option>
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Display & Layout Tools */}
+          {/* Professional COLOR & THEME Section */}
           <div
-            onMouseEnter={() => setHoveredPropertyInfo('Display Mode: Toggle CSS block, flex, or grid display layout.')}
+            onMouseEnter={() =>
+              setHoveredPropertyInfo(
+                'Color & Theme: Customize background, text, and border colors, or apply quick theme presets for active scope.'
+              )
+            }
             onMouseLeave={() => setHoveredPropertyInfo(null)}
-            className="space-y-2 border-b border-white/10 pb-3"
+            className="space-y-3 border-b border-[#262626] pb-4"
           >
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-              <span>Layout Display</span>
-              <Info className="w-3 h-3 text-slate-500" />
-            </label>
-            <div className="grid grid-cols-4 gap-1 bg-[#000000]/60 p-1 rounded-lg border border-white/15 font-mono text-[11px]">
-              {(['block', 'flex', 'grid', 'none'] as const).map((disp) => (
-                <button
-                  key={disp}
-                  onClick={() => handleStyleChange('display', disp)}
-                  className={`py-1 rounded capitalize transition-all ${
-                    (resolvedProps?.style?.display || 'block') === disp
-                      ? 'bg-white text-black font-bold shadow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {disp}
-                </button>
-              ))}
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-semibold text-neutral-300 uppercase tracking-wider flex items-center gap-1">
+                <Palette className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Color & Theme</span>
+              </label>
+              <button
+                onClick={handleResetThemeColors}
+                title="Reset all theme colors for current scope"
+                className="flex items-center gap-1 text-[10px] font-mono text-neutral-400 hover:text-white bg-[#171717] hover:bg-[#242424] px-2 py-0.5 rounded border border-[#333333] transition-all cursor-pointer"
+              >
+                <RotateCcw className="w-2.5 h-2.5" />
+                <span>Reset Theme Colors</span>
+              </button>
             </div>
-          </div>
 
-          {/* Quick Theme Presets */}
-          <div
-            onMouseEnter={() => setHoveredPropertyInfo('Quick Theme Presets: 1-click background theme presets.')}
-            onMouseLeave={() => setHoveredPropertyInfo(null)}
-            className="space-y-2 border-b border-white/10 pb-3"
-          >
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-              <span>Quick Theme Presets</span>
-              <Info className="w-3 h-3 text-slate-500" />
-            </label>
+            {/* Quick Theme Presets */}
+            <div>
+              <span className="text-[10px] text-neutral-400 font-mono block mb-1">Quick Theme Presets</span>
+              <div className="grid grid-cols-2 gap-1.5">
+                {colorPresets.map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => {
+                      executeCommand({
+                        source: 'canvas',
+                        targetIds: [primaryElementId],
+                        viewportScope: activeEditScope,
+                        changes: {
+                          [primaryElementId]: {
+                            style: {
+                              backgroundColor: preset.bg,
+                              color: preset.text,
+                            },
+                          },
+                        },
+                      });
+                    }}
+                    className="flex items-center gap-2 p-1.5 bg-[#111111] hover:bg-[#171717] rounded-lg border border-[#262626] text-[10px] text-neutral-300 font-mono transition-all text-left cursor-pointer"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full border border-[#444444] shrink-0"
+                      style={{ backgroundColor: preset.bg }}
+                    ></div>
+                    <span className="truncate">{preset.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <div className="grid grid-cols-2 gap-1.5">
-              {colorPresets.map((preset, idx) => (
+            {/* Custom Background Color */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-neutral-400 font-mono">Background Color</span>
                 <button
-                  key={idx}
-                  onClick={() => {
-                    handleStyleChange('backgroundColor', preset.bg);
-                    handleStyleChange('color', preset.text);
-                  }}
-                  className="flex items-center gap-2 p-1.5 rounded-lg border border-white/15 bg-[#000000]/60 hover:border-white/40 text-left transition-all"
+                  onClick={() => handleResetColor('backgroundColor')}
+                  title="Reset Background Color for current scope"
+                  className="text-[9px] font-mono text-neutral-500 hover:text-neutral-300 cursor-pointer"
                 >
-                  <div className="w-3.5 h-3.5 rounded-full border border-white/20 shrink-0" style={{ backgroundColor: preset.bg }}></div>
-                  <span className="text-[10px] text-slate-300 font-medium truncate">{preset.label}</span>
+                  Reset
                 </button>
-              ))}
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#111111] border border-[#303030] rounded-lg p-1">
+                <input
+                  type="color"
+                  value={formatColorForPicker(scopeSpecificProps?.style?.backgroundColor ?? resolvedProps?.style?.backgroundColor)}
+                  onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                  className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent shrink-0"
+                />
+                <input
+                  type="text"
+                  value={scopeSpecificProps?.style?.backgroundColor ?? resolvedProps?.style?.backgroundColor ?? ''}
+                  onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                  placeholder="#000000 or rgba(...)"
+                  className="w-full bg-transparent text-xs text-neutral-200 focus:outline-none font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Custom Text Color */}
+            {isTextElement && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-neutral-400 font-mono">Text Color</span>
+                  <button
+                    onClick={() => handleResetColor('color')}
+                    title="Reset Text Color for current scope"
+                    className="text-[9px] font-mono text-neutral-500 hover:text-neutral-300 cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <div className="flex items-center gap-1.5 bg-[#111111] border border-[#303030] rounded-lg p-1">
+                  <input
+                    type="color"
+                    value={formatColorForPicker(scopeSpecificProps?.style?.color ?? resolvedProps?.style?.color)}
+                    onChange={(e) => handleStyleChange('color', e.target.value)}
+                    className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent shrink-0"
+                  />
+                  <input
+                    type="text"
+                    value={scopeSpecificProps?.style?.color ?? resolvedProps?.style?.color ?? ''}
+                    onChange={(e) => handleStyleChange('color', e.target.value)}
+                    placeholder="#ffffff or rgba(...)"
+                    className="w-full bg-transparent text-xs text-neutral-200 focus:outline-none font-mono"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Custom Border Color */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-neutral-400 font-mono">Border Color</span>
+                <button
+                  onClick={() => handleResetColor('borderColor')}
+                  title="Reset Border Color for current scope"
+                  className="text-[9px] font-mono text-neutral-500 hover:text-neutral-300 cursor-pointer"
+                >
+                  Reset
+                </button>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#111111] border border-[#303030] rounded-lg p-1">
+                <input
+                  type="color"
+                  value={formatColorForPicker(scopeSpecificProps?.style?.borderColor ?? resolvedProps?.style?.borderColor)}
+                  onChange={(e) => handleStyleChange('borderColor', e.target.value)}
+                  className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent shrink-0"
+                />
+                <input
+                  type="text"
+                  value={scopeSpecificProps?.style?.borderColor ?? resolvedProps?.style?.borderColor ?? ''}
+                  onChange={(e) => handleStyleChange('borderColor', e.target.value)}
+                  placeholder="#333333 or rgba(...)"
+                  className="w-full bg-transparent text-xs text-neutral-200 focus:outline-none font-mono"
+                />
+              </div>
             </div>
           </div>
 
@@ -346,88 +717,6 @@ export const PropertyPanel: React.FC = () => {
                   onChange={(e) => handleSizeChange('minHeight', e.target.value)}
                   className="w-full bg-[#000000]/60 border border-white/15 rounded p-1.5 text-xs text-slate-200"
                 />
-              </div>
-            </div>
-          </div>
-
-          {/* Style & Fill Alignment */}
-          <div
-            onMouseEnter={() => setHoveredPropertyInfo('Styling & Fill: Adjust text alignment, color, and background fill.')}
-            onMouseLeave={() => setHoveredPropertyInfo(null)}
-            className="space-y-2.5 border-b border-white/10 pb-3"
-          >
-            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              <span className="flex items-center gap-1">
-                <span>Style & Fill</span>
-                <Info className="w-3 h-3 text-slate-500" />
-              </span>
-              <Palette className="w-3.5 h-3.5 text-slate-500" />
-            </div>
-
-            {/* Alignment Tools */}
-            <div className="flex items-center bg-[#000000]/60 p-1 rounded-lg border border-white/15">
-              <button
-                onClick={() => handleStyleChange('textAlign', 'left')}
-                className={`flex-1 py-1 flex items-center justify-center rounded ${
-                  resolvedProps?.style?.textAlign === 'left' ? 'bg-white/20 text-white' : 'text-slate-400'
-                }`}
-              >
-                <AlignLeft className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => handleStyleChange('textAlign', 'center')}
-                className={`flex-1 py-1 flex items-center justify-center rounded ${
-                  resolvedProps?.style?.textAlign === 'center' ? 'bg-white/20 text-white' : 'text-slate-400'
-                }`}
-              >
-                <AlignCenter className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => handleStyleChange('textAlign', 'right')}
-                className={`flex-1 py-1 flex items-center justify-center rounded ${
-                  resolvedProps?.style?.textAlign === 'right' ? 'bg-white/20 text-white' : 'text-slate-400'
-                }`}
-              >
-                <AlignRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* Color Inputs */}
-            <div className="space-y-2 font-mono text-[11px]">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Text Color</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={resolvedProps?.style?.color || '#ffffff'}
-                    onChange={(e) => handleStyleChange('color', e.target.value)}
-                    className="w-5 h-5 rounded cursor-pointer border border-white/15 bg-transparent"
-                  />
-                  <input
-                    type="text"
-                    value={resolvedProps?.style?.color || '#ffffff'}
-                    onChange={(e) => handleStyleChange('color', e.target.value)}
-                    className="w-20 bg-[#000000]/60 border border-white/15 rounded px-2 py-0.5 text-xs text-slate-200"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Background</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={resolvedProps?.style?.backgroundColor || '#000000'}
-                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
-                    className="w-5 h-5 rounded cursor-pointer border border-white/15 bg-transparent"
-                  />
-                  <input
-                    type="text"
-                    value={resolvedProps?.style?.backgroundColor || '#000000'}
-                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
-                    className="w-20 bg-[#000000]/60 border border-white/15 rounded px-2 py-0.5 text-xs text-slate-200"
-                  />
-                </div>
               </div>
             </div>
           </div>

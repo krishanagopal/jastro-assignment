@@ -12,10 +12,18 @@ export interface ElementProperties {
   style?: {
     backgroundColor?: string;
     color?: string;
+    borderColor?: string;
+    fontFamily?: string;
     fontSize?: string;
+    fontWeight?: string;
+    fontStyle?: string;
+    textDecoration?: string;
+    lineHeight?: string;
+    letterSpacing?: string;
+    textAlign?: 'left' | 'center' | 'right' | 'justify';
+    textTransform?: string;
     padding?: string;
     borderRadius?: string;
-    textAlign?: 'left' | 'center' | 'right';
     marginTop?: string;
     marginBottom?: string;
     marginLeft?: string;

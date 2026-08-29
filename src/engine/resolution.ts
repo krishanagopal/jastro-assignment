@@ -49,26 +49,87 @@ export function getScopeSpecificProperties(
 export function applyScopePatchToElement(
   element: TemplateElement,
   scope: ViewportScope,
-  patch: Partial<ElementProperties>
+  patch: Partial<ElementProperties>,
+  isRestore = false
 ): TemplateElement {
+  // Full revision restore (e.g. history recovery where patch provides full ElementProperties)
+  const isFullRestore =
+    isRestore &&
+    (patch.content !== undefined || patch.size !== undefined || patch.layout !== undefined);
+
+  if (isFullRestore) {
+    if (scope === 'all') {
+      return {
+        ...element,
+        baseProperties: JSON.parse(JSON.stringify(patch as ElementProperties)),
+      };
+    }
+    return {
+      ...element,
+      viewportOverrides: {
+        ...element.viewportOverrides,
+        [scope]: JSON.parse(JSON.stringify(patch as ElementProperties)),
+      },
+    };
+  }
+
+  // Partial edit / property reset patch
   if (scope === 'all') {
+    const updatedStyle = { ...element.baseProperties.style, ...patch.style };
+    if (patch.style) {
+      for (const k in patch.style) {
+        if ((patch.style as any)[k] === undefined) {
+          delete (updatedStyle as any)[k];
+        }
+      }
+    }
+
+    const updatedContent = patch.content
+      ? { ...element.baseProperties.content, ...patch.content }
+      : element.baseProperties.content;
+    const updatedSize = patch.size
+      ? { ...element.baseProperties.size, ...patch.size }
+      : element.baseProperties.size;
+    const updatedLayout = patch.layout
+      ? { ...element.baseProperties.layout, ...patch.layout }
+      : element.baseProperties.layout;
+
     return {
       ...element,
       baseProperties: {
-        content: { ...element.baseProperties.content, ...patch.content },
-        style: { ...element.baseProperties.style, ...patch.style },
-        size: { ...element.baseProperties.size, ...patch.size },
-        layout: { ...element.baseProperties.layout, ...patch.layout },
+        content: updatedContent,
+        style: updatedStyle,
+        size: updatedSize,
+        layout: updatedLayout,
       },
     };
   }
 
   const existingOverride = element.viewportOverrides[scope] || {};
+  const updatedStyle = { ...existingOverride.style, ...patch.style };
+  if (patch.style) {
+    for (const k in patch.style) {
+      if ((patch.style as any)[k] === undefined) {
+        delete (updatedStyle as any)[k];
+      }
+    }
+  }
+
+  const updatedContent = patch.content
+    ? { ...existingOverride.content, ...patch.content }
+    : existingOverride.content;
+  const updatedSize = patch.size
+    ? { ...existingOverride.size, ...patch.size }
+    : existingOverride.size;
+  const updatedLayout = patch.layout
+    ? { ...existingOverride.layout, ...patch.layout }
+    : existingOverride.layout;
+
   const updatedOverride = {
-    content: { ...existingOverride.content, ...patch.content },
-    style: { ...existingOverride.style, ...patch.style },
-    size: { ...existingOverride.size, ...patch.size },
-    layout: { ...existingOverride.layout, ...patch.layout },
+    content: updatedContent,
+    style: updatedStyle,
+    size: updatedSize,
+    layout: updatedLayout,
   };
 
   return {
