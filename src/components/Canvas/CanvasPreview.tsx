@@ -1,202 +1,303 @@
-import React from 'react';
-import { Globe, Laptop, Layers, MousePointer, ShieldCheck, Smartphone, Tablet } from 'lucide-react';
-import { resolveElementProperties } from '../../engine/resolution';
+import React, { useState } from 'react';
+import {
+  ChevronRight,
+  Grid,
+  Hand,
+  Image,
+  Laptop,
+  Layers,
+  Moon,
+  MousePointer,
+  Palette,
+  Smartphone,
+  Sparkles,
+  Sun,
+  Tablet,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
 import { useTemplateStore } from '../../state/templateStore';
-import { TemplateElement } from '../../types/template';
+import { TemplateTreeRenderer } from '../TemplateRenderer/TemplateTreeRenderer';
+
+export type CanvasThemeTexture = 'wave' | 'slate' | 'grid' | 'cosmic' | 'checker';
 
 export const CanvasPreview: React.FC = () => {
-  const {
-    canonicalTemplate,
-    selectedElementIds,
-    selectElement,
-    activeViewport,
-    activeEditScope,
-  } = useTemplateStore();
+  const { canonicalTemplate, activeViewport, selectedElementIds, selectElement, pages, activePageId } = useTemplateStore();
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [activeTool, setActiveTool] = useState<'pointer' | 'hand'>('pointer');
+  const [canvasTexture, setCanvasTexture] = useState<CanvasThemeTexture>('wave');
+  const [isThemePickerOpen, setIsThemePickerOpen] = useState<boolean>(false);
 
-  // Width mapping for realistic previews: Desktop (1280px), Tablet (768px), Mobile (375px)
-  const widthClassMap = {
-    desktop: 'w-[1100px]',
-    tablet: 'w-[720px]',
-    mobile: 'w-[375px]',
-  };
+  const isPreviewAllMode = activePageId === 'preview-all';
+  const activePage = isPreviewAllMode
+    ? { name: 'Whole Website (All Pages)', slug: '/all-pages' }
+    : pages[activePageId] || { name: 'Home Page', slug: '/' };
 
-  const viewportLabelMap = {
-    desktop: 'Desktop Preview (~1440px)',
-    tablet: 'Tablet Preview (~768px)',
-    mobile: 'Mobile Preview (~375px)',
-  };
-
-  const elementsMap = canonicalTemplate.elements;
-
-  const handleElementClick = (e: React.MouseEvent, elementId: string) => {
-    e.stopPropagation();
-    const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
-    selectElement(elementId, isMulti);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent, elementId: string) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
-      selectElement(elementId, isMulti);
+  const getViewportWidthClass = () => {
+    switch (activeViewport) {
+      case 'mobile':
+        return 'w-[375px]';
+      case 'tablet':
+        return 'w-[768px]';
+      case 'desktop':
+      default:
+        return 'w-[1200px] max-w-full';
     }
   };
 
-  // Helper to render an individual modular element
-  const renderElement = (elem: TemplateElement) => {
-    if (!elem) return null;
+  const getViewportBadgeIcon = () => {
+    switch (activeViewport) {
+      case 'mobile':
+        return <Smartphone className="w-3.5 h-3.5 text-slate-400" />;
+      case 'tablet':
+        return <Tablet className="w-3.5 h-3.5 text-slate-400" />;
+      case 'desktop':
+      default:
+        return <Laptop className="w-3.5 h-3.5 text-slate-400" />;
+    }
+  };
 
-    const resolvedProps = resolveElementProperties(elem, activeViewport);
-    const isSelected = selectedElementIds.includes(elem.id);
-    const hasOverride = !!elem.viewportOverrides[activeViewport];
+  // Background Texture Classes
+  const getTextureStyle = () => {
+    switch (canvasTexture) {
+      case 'slate':
+        return 'bg-gradient-to-br from-[#181924] via-[#0c0d12] to-[#020203]';
+      case 'grid':
+        return 'bg-[#090a0e] bg-[radial-gradient(#262938_1px,transparent_1px)] [background-size:16px_16px]';
+      case 'cosmic':
+        return 'bg-[#06070a] bg-[radial-gradient(ellipse_at_center,rgba(50,55,75,0.4)_0%,rgba(0,0,0,0.9)_100%)]';
+      case 'checker':
+        return 'bg-[#0a0b10] bg-[linear-gradient(45deg,#12131c_25%,transparent_25%),linear-gradient(-45deg,#12131c_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#12131c_75%),linear-gradient(-45deg,transparent_75%,#12131c_75%)] [background-size:20px_20px] [background-position:0_0,0_10px,10px_-10px,-10px_0px]';
+      case 'wave':
+      default:
+        return 'bg-[#000000]';
+    }
+  };
 
+  const renderElementsList = (elementsMap: Record<string, any>) => {
     return (
-      <div
-        key={elem.id}
-        tabIndex={0}
-        onClick={(e) => handleElementClick(e, elem.id)}
-        onKeyDown={(e) => handleKeyDown(e, elem.id)}
-        className={`group relative transition-all duration-200 cursor-pointer rounded-xl border-2 focus:outline-none ${
-          isSelected
-            ? 'border-blue-500 bg-blue-500/10 ring-4 ring-blue-500/20 shadow-lg scale-[1.005]'
-            : 'border-transparent hover:border-slate-300/80 hover:bg-slate-100/50'
-        }`}
-        style={{
-          backgroundColor: resolvedProps.style?.backgroundColor || 'transparent',
-          color: resolvedProps.style?.color || 'inherit',
-          fontSize: resolvedProps.style?.fontSize || 'inherit',
-          padding: resolvedProps.style?.padding || undefined,
-          borderRadius: resolvedProps.style?.borderRadius || undefined,
-          textAlign: resolvedProps.style?.textAlign || 'left',
-          width: resolvedProps.size?.width || '100%',
-          maxWidth: resolvedProps.size?.maxWidth || '100%',
-          minHeight: resolvedProps.size?.minHeight || undefined,
-        }}
-      >
-        {/* Selection Badge Overlay */}
-        {isSelected && (
-          <div className="absolute -top-3.5 left-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-lg flex items-center gap-1 z-30 tracking-wide">
-            <MousePointer className="w-3 h-3" />
-            <span>{elem.label}</span>
-            <span className="ml-1 px-1.5 py-0.2 bg-blue-950/80 text-blue-200 rounded uppercase text-[9px] font-black">
-              {activeEditScope.toUpperCase()}
-            </span>
-          </div>
-        )}
-
-        {/* Override Badge Overlay */}
-        {hasOverride && !isSelected && (
-          <div
-            className="absolute -top-2.5 right-4 bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md shadow-md z-20 uppercase tracking-widest"
-            title={`Active ${activeViewport} Override`}
-          >
-            {activeViewport} OVERRIDE
-          </div>
-        )}
-
-        {/* Content Renderers */}
-        {elem.type === 'heading' && (
-          <h2 className="font-extrabold tracking-tight leading-tight">
-            {resolvedProps.content?.text}
-          </h2>
-        )}
-
-        {elem.type === 'paragraph' && (
-          <p className="leading-relaxed opacity-90">{resolvedProps.content?.text}</p>
-        )}
-
-        {elem.type === 'button' && (
-          <button className="font-semibold shadow-md active:scale-95 transition-all inline-block hover:brightness-110">
-            {resolvedProps.content?.text}
-          </button>
-        )}
-
-        {elem.type === 'card' && (
-          <div className="flex flex-col gap-2.5 h-full justify-between">
-            {resolvedProps.content?.badgeText && (
-              <span className="self-start text-[11px] font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md shadow-sm">
-                {resolvedProps.content.badgeText}
-              </span>
-            )}
-            <p className="font-medium text-sm leading-relaxed">
-              {resolvedProps.content?.text}
-            </p>
-          </div>
-        )}
-      </div>
+      <TemplateTreeRenderer
+        elementsMap={elementsMap}
+        activeViewport={activeViewport}
+        selectedElementIds={selectedElementIds}
+        isEditorMode={true}
+        onSelectElement={selectElement}
+      />
     );
   };
 
+  const selectedElement = selectedElementIds.length > 0 ? canonicalTemplate.elements[selectedElementIds[0]] : null;
+
   return (
-    <div className="flex-1 overflow-auto p-6 flex flex-col items-center justify-start bg-slate-950/90 min-h-screen relative select-none">
-      {/* Scope Protection Banner */}
-      <div className="mb-5 flex items-center justify-between w-full max-w-5xl bg-slate-900/90 px-4 py-2.5 rounded-xl border border-slate-800 text-xs shadow-md">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="font-semibold text-slate-300">
-            {viewportLabelMap[activeViewport]}
-          </span>
-        </div>
+    <main
+      className={`flex-1 min-w-0 min-h-0 flex flex-col items-center justify-start p-4 sm:p-6 overflow-y-auto relative select-none z-20 transition-all duration-300 ${getTextureStyle()}`}
+    >
+      {/* Silver Particle Wave Video Background when wave texture selected */}
+      {canvasTexture === 'wave' && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 pointer-events-none"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260818_072341_50851634-bbc3-4c33-9acc-7647d4db44aa.mp4"
+            type="video/mp4"
+          />
+        </video>
+      )}
 
-        {/* Candidate Custom Feature: Visual Scope Impact Indicator */}
-        <div className="flex items-center gap-2 bg-blue-950/80 border border-blue-800/80 text-blue-300 px-3 py-1 rounded-lg text-xs font-semibold">
-          <ShieldCheck className="w-4 h-4 text-blue-400" />
-          <span>
-            Scope Isolation: <strong className="text-white uppercase">{activeEditScope} VIEWS</strong>
-          </span>
-        </div>
+      {/* Dark Ambient Radial Scrim */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.85)_100%)]"></div>
+
+      {/* Viewport Frame Header Tag (Sticky Top) */}
+      <div className="sticky top-0 z-30 shrink-0 flex items-center gap-2 px-3.5 py-1.5 bg-[#0c0d12]/95 border border-white/20 rounded-full text-xs text-slate-300 shadow-2xl backdrop-blur-xl mb-4">
+        {getViewportBadgeIcon()}
+        <span className="font-semibold capitalize text-white">{activeViewport} Frame</span>
+        <span className="text-slate-500">•</span>
+        <span className="text-slate-300 font-mono text-[11px] font-bold">{activePage.name}</span>
+        <span className="text-slate-500 font-mono text-[11px]">
+          ({activeViewport === 'desktop' ? '1200px' : activeViewport === 'tablet' ? '768px' : '375px'})
+        </span>
       </div>
 
-      {/* Simulated Browser Frame Window */}
-      <div
-        className={`transition-canvas bg-slate-900 rounded-2xl canvas-shadow border border-slate-800 overflow-hidden flex flex-col ${widthClassMap[activeViewport]}`}
-      >
-        {/* Browser Chrome Header Bar */}
-        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-          </div>
-          <div className="bg-slate-950/80 text-slate-400 text-[11px] font-mono px-4 py-1 rounded-lg border border-slate-800/80 flex items-center gap-1.5 w-64 justify-center">
-            <Globe className="w-3 h-3 text-slate-500" />
-            <span>https://apex-solutions.demo</span>
-          </div>
-          <div className="w-12"></div>
-        </div>
+      {/* Center Studio Canvas Document Frame */}
+      {(() => {
+        const isLightTree = Object.values(canonicalTemplate.elements).some(
+          (el) => el.id.includes('flowith') || el.baseProperties?.style?.backgroundColor === '#fafcfb'
+        );
 
-        {/* Webpage Content Surface */}
-        <div className="bg-slate-100 text-slate-900 p-8 min-h-[750px] flex flex-col gap-10">
-          {/* Section 1: Hero Banner */}
-          <div className="flex flex-col items-center text-center gap-5 max-w-3xl mx-auto py-6">
-            {renderElement(elementsMap['hero-title'])}
-            {renderElement(elementsMap['hero-subtitle'])}
-            {renderElement(elementsMap['hero-cta-button'])}
-          </div>
-
-          {/* Section 2: Services Grid (Responsive: 3 columns on Desktop/Tablet, 1 column on Mobile) */}
+        return (
           <div
-            className={`grid gap-6 ${
-              activeViewport === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'
-            }`}
+            style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+            className={`transition-all duration-200 ${getViewportWidthClass()} ${
+              isLightTree ? 'bg-[#fafcfb] text-slate-900 border-slate-300' : 'bg-[#06070a]/90 text-slate-100 border-white/15'
+            } shadow-2xl rounded-2xl border relative my-4 h-auto min-h-full z-20 shrink-0`}
           >
-            {renderElement(elementsMap['service-card-1'])}
-            {renderElement(elementsMap['service-card-2'])}
-            {renderElement(elementsMap['service-card-3'])}
+            {isPreviewAllMode ? (
+              <div className="divide-y divide-white/15">
+                {Object.values(pages).map((page) => (
+                  <div key={page.id} className="relative">
+                    {/* Page Banner Header */}
+                    <div className="sticky top-0 bg-[#0c0d12]/95 border-b border-white/10 px-6 py-2.5 flex items-center justify-between z-20 backdrop-blur-md">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-white font-mono">📄 {page.name}</span>
+                        <span className="text-[10px] font-mono text-slate-400 bg-white/10 px-2 py-0.5 rounded">
+                          {page.slug}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono">Page Block</span>
+                    </div>
+
+                    {/* Page Elements */}
+                    {renderElementsList(page.elements)}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              renderElementsList(canonicalTemplate.elements)
+            )}
+          </div>
+        );
+      })()}
+
+      {/* Webflow-Style Bottom Breadcrumbs Bar + Controls (Sticky Bottom) */}
+      <div className="sticky bottom-0 z-40 shrink-0 w-full flex items-center justify-between gap-4 mt-4">
+        {/* Left Webflow Breadcrumbs Hierarchy */}
+        <div className="flex items-center gap-1.5 bg-[#0c0d12]/90 border border-white/15 rounded-xl px-3 py-1.5 shadow-2xl backdrop-blur-xl text-xs text-slate-300 font-mono">
+          <span className="text-slate-400">Body</span>
+          <ChevronRight className="w-3 h-3 text-slate-600" />
+          <span>{activePage.name}</span>
+          {selectedElement && (
+            <>
+              <ChevronRight className="w-3 h-3 text-slate-600" />
+              <span className="text-white font-bold bg-white/10 px-2 py-0.5 rounded border border-white/15">
+                {selectedElement.label}
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Right Floating Canvas Controls Toolbar */}
+        <div className="flex items-center gap-2 bg-[#0c0d12]/90 border border-white/15 rounded-xl p-1 shadow-2xl backdrop-blur-xl text-xs text-slate-200">
+          <button
+            onClick={() => setActiveTool('pointer')}
+            className={`p-1.5 rounded-lg transition-all ${
+              activeTool === 'pointer' ? 'bg-white/20 text-white shadow' : 'text-slate-400 hover:text-white'
+            }`}
+            title="Pointer Tool"
+          >
+            <MousePointer className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setActiveTool('hand')}
+            className={`p-1.5 rounded-lg transition-all ${
+              activeTool === 'hand' ? 'bg-white/20 text-white shadow' : 'text-slate-400 hover:text-white'
+            }`}
+            title="Hand Pan Tool"
+          >
+            <Hand className="w-3.5 h-3.5" />
+          </button>
+
+          <div className="h-4 w-px bg-white/10 mx-1"></div>
+
+          {/* Canvas Background Theme Texture Switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setIsThemePickerOpen((prev) => !prev)}
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all font-semibold"
+              title="Change Canvas Background Texture"
+            >
+              <Palette className="w-3.5 h-3.5 text-slate-300" />
+              <span className="capitalize font-mono text-[11px]">{canvasTexture}</span>
+            </button>
+
+            {isThemePickerOpen && (
+              <div className="absolute bottom-full right-0 mb-2 w-52 bg-[#0c0d12]/95 backdrop-blur-2xl border border-white/15 rounded-xl shadow-2xl p-1.5 z-50 text-xs text-slate-200 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-2 py-1 border-b border-white/10 font-mono text-[10px] text-slate-400 uppercase tracking-wider font-bold">
+                  Canvas Background Theme
+                </div>
+                <button
+                  onClick={() => {
+                    setCanvasTexture('wave');
+                    setIsThemePickerOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-left transition-colors ${
+                    canvasTexture === 'wave' ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <span>🌊 Silver Particle Wave</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCanvasTexture('slate');
+                    setIsThemePickerOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-left transition-colors ${
+                    canvasTexture === 'slate' ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <span>🌑 Metallic Graphite Slate</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCanvasTexture('grid');
+                    setIsThemePickerOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-left transition-colors ${
+                    canvasTexture === 'grid' ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <span>📐 Architectural Grid</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCanvasTexture('cosmic');
+                    setIsThemePickerOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-left transition-colors ${
+                    canvasTexture === 'cosmic' ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <span>🌌 Cosmic Ambient Glow</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCanvasTexture('checker');
+                    setIsThemePickerOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-left transition-colors ${
+                    canvasTexture === 'checker' ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <span>🏁 Studio Checkerboard</span>
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Section 3: Value Proposition Card */}
-          <div className="w-full">
-            {renderElement(elementsMap['value-prop-card'])}
-          </div>
+          <div className="h-4 w-px bg-white/10 mx-1"></div>
 
-          {/* Section 4: Footer CTA & Copyright */}
-          <div className="flex flex-col items-center gap-4 text-center border-t border-slate-300/60 pt-8 mt-4">
-            {renderElement(elementsMap['cta-section-title'])}
-            {renderElement(elementsMap['footer-text'])}
-          </div>
+          <button
+            onClick={() => setZoomLevel((prev) => Math.max(50, prev - 10))}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            title="Zoom Out"
+          >
+            <ZoomOut className="w-3.5 h-3.5" />
+          </button>
+
+          <span className="font-mono text-xs text-slate-300 font-bold px-1">{zoomLevel}%</span>
+
+          <button
+            onClick={() => setZoomLevel((prev) => Math.min(150, prev + 10))}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            title="Zoom In"
+          >
+            <ZoomIn className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 };

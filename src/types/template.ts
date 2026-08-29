@@ -1,6 +1,6 @@
 export type ViewportScope = 'all' | 'desktop' | 'tablet' | 'mobile';
 
-export type ElementType = 'heading' | 'paragraph' | 'button' | 'image' | 'card' | 'container';
+export type ElementType = 'heading' | 'paragraph' | 'button' | 'image' | 'card' | 'container' | 'section';
 
 export interface ElementProperties {
   content?: {
@@ -16,11 +16,22 @@ export interface ElementProperties {
     padding?: string;
     borderRadius?: string;
     textAlign?: 'left' | 'center' | 'right';
+    marginTop?: string;
+    marginBottom?: string;
+    marginLeft?: string;
+    marginRight?: string;
+    paddingTop?: string;
+    paddingBottom?: string;
+    paddingLeft?: string;
+    paddingRight?: string;
+    display?: 'block' | 'flex' | 'grid' | 'none';
+    position?: 'relative' | 'absolute' | 'fixed';
   };
   size?: {
     width?: string;
     maxWidth?: string;
     minHeight?: string;
+    height?: string;
   };
   layout?: {
     flexDirection?: 'row' | 'column';
@@ -42,11 +53,20 @@ export interface TemplateElement {
   };
 }
 
+export interface TemplatePage {
+  id: string;
+  name: string;
+  slug: string;
+  elements: Record<string, TemplateElement>;
+}
+
 export interface TemplateModel {
   templateId: string;
   name: string;
   version: number; // Global template revision counter
   elements: Record<string, TemplateElement>;
+  pages?: Record<string, TemplatePage>;
+  activePageId?: string;
 }
 
 // Scope-Specific Patch: exact properties being modified for a given scope

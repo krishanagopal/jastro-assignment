@@ -49,7 +49,7 @@ describe('Code & Canvas State Consistency', () => {
 
     // Initial state remains untouched
     expect(INITIAL_TEMPLATE.elements['hero-title'].baseProperties.content?.text).toBe(
-      'Scale Your Business With Intelligent Solutions'
+      'Automate Complex Workflows with Autonomous AI Agents'
     );
   });
 });

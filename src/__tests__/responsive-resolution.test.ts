@@ -8,18 +8,18 @@ describe('Responsive Resolution & Override Isolation', () => {
     const element = INITIAL_TEMPLATE.elements['hero-title'];
     const resolvedDesktop = resolveElementProperties(element, 'desktop');
 
-    expect(resolvedDesktop.content?.text).toBe('Scale Your Business With Intelligent Solutions');
-    expect(resolvedDesktop.style?.fontSize).toBe('36px');
+    expect(resolvedDesktop.content?.text).toBe('Automate Complex Workflows with Autonomous AI Agents');
+    expect(resolvedDesktop.style?.fontSize).toBe('48px');
   });
 
   it('applies viewport override when viewing specified viewport', () => {
     const element = INITIAL_TEMPLATE.elements['hero-title'];
     const resolvedMobile = resolveElementProperties(element, 'mobile');
 
-    // Mobile has fontSize override: '26px'
-    expect(resolvedMobile.style?.fontSize).toBe('26px');
+    // Mobile has fontSize override: '28px'
+    expect(resolvedMobile.style?.fontSize).toBe('28px');
     // Content is inherited from base
-    expect(resolvedMobile.content?.text).toBe('Scale Your Business With Intelligent Solutions');
+    expect(resolvedMobile.content?.text).toBe('Automate Complex Workflows with Autonomous AI Agents');
   });
 
   it('ensures a mobile-specific override edit does NOT modify desktop or base properties', () => {
@@ -45,11 +45,11 @@ describe('Responsive Resolution & Override Isolation', () => {
     expect(updatedElement.viewportOverrides.mobile?.style?.color).toBe('#ff0000');
 
     // Base color remains untouched
-    expect(updatedElement.baseProperties.style?.color).toBe('#0f172a');
+    expect(updatedElement.baseProperties.style?.color).toBe('#ffffff');
 
     // Desktop view resolution remains untouched
     const resolvedDesktop = resolveElementProperties(updatedElement, 'desktop');
-    expect(resolvedDesktop.style?.color).toBe('#0f172a');
+    expect(resolvedDesktop.style?.color).toBe('#ffffff');
 
     // Mobile view resolution reflects override
     const resolvedMobile = resolveElementProperties(updatedElement, 'mobile');

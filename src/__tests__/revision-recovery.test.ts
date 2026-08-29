@@ -25,7 +25,7 @@ describe('Revision History & Independent Recovery', () => {
     const entry = newHistoryEntries[0];
     expect(entry.elementId).toBe('hero-title');
     expect(entry.viewportScope).toBe('mobile');
-    expect(entry.previousState.style?.fontSize).toBe('26px'); // Initial mobile override font size
+    expect(entry.previousState.style?.fontSize).toBe('28px'); // Initial mobile override font size
     expect(entry.nextState.style?.fontSize).toBe('30px');
     expect(entry.actionType).toBe('manual');
   });
@@ -88,5 +88,66 @@ describe('Revision History & Independent Recovery', () => {
     // Restore action created a new history entry!
     expect(restoreResult.newHistoryEntries).toHaveLength(1);
     expect(restoreResult.newHistoryEntries[0].actionType).toBe('restore');
+  });
+
+  it('performs surgical recovery of hero-title Mobile override while keeping Desktop, Navbar, and unrelated elements untouched', () => {
+    // 1. Initial State assertions
+    expect(INITIAL_TEMPLATE.elements['hero-title'].baseProperties.style?.fontSize).toBe('48px');
+    expect(INITIAL_TEMPLATE.elements['hero-title'].viewportOverrides.mobile?.style?.fontSize).toBe('28px');
+    expect(INITIAL_TEMPLATE.elements['nav-link-features'].baseProperties.content?.text).toBe('Features');
+
+    // 2. Edit hero-title Mobile override
+    const editCommand: EditCommand = {
+      id: 'cmd_mobile_hero_title',
+      timestamp: Date.now(),
+      source: 'canvas',
+      targetIds: ['hero-title'],
+      viewportScope: 'mobile',
+      baseRevision: INITIAL_TEMPLATE.version,
+      changes: {
+        'hero-title': {
+          style: { fontSize: '20px' },
+        },
+      },
+    };
+
+    const editResult = commitEditCommand(INITIAL_TEMPLATE, editCommand);
+    const modelAfterEdit = editResult.updatedModel;
+    expect(modelAfterEdit.elements['hero-title'].viewportOverrides.mobile?.style?.fontSize).toBe('20px');
+
+    // 3. Restore hero-title Mobile override using history entry previousState
+    const historyEntry = editResult.newHistoryEntries[0];
+    const restoreCommand: EditCommand = {
+      id: 'cmd_restore_mobile',
+      timestamp: Date.now(),
+      source: 'restore',
+      targetIds: ['hero-title'],
+      viewportScope: 'mobile',
+      baseRevision: modelAfterEdit.version,
+      changes: {
+        'hero-title': historyEntry.previousState,
+      },
+    };
+
+    const restoreResult = commitEditCommand(modelAfterEdit, restoreCommand);
+    const restoredModel = restoreResult.updatedModel;
+
+    // 4. Assertions:
+    // a. hero-title Mobile font size is surgically restored back to 28px
+    expect(restoredModel.elements['hero-title'].viewportOverrides.mobile?.style?.fontSize).toBe('28px');
+
+    // b. hero-title Desktop base font size remains completely unchanged (48px)
+    expect(restoredModel.elements['hero-title'].baseProperties.style?.fontSize).toBe('48px');
+
+    // c. Other hero elements (hero-subtitle, hero-cta-button) remain completely unchanged
+    expect(restoredModel.elements['hero-subtitle'].baseProperties.content?.text).toBe(
+      INITIAL_TEMPLATE.elements['hero-subtitle'].baseProperties.content?.text
+    );
+    expect(restoredModel.elements['hero-cta-button'].baseProperties.content?.text).toBe(
+      INITIAL_TEMPLATE.elements['hero-cta-button'].baseProperties.content?.text
+    );
+
+    // d. Navbar elements (nav-link-features, nav-cta-btn) remain completely unchanged
+    expect(restoredModel.elements['nav-link-features'].baseProperties.content?.text).toBe('Features');
   });
 });

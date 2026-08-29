@@ -42,3 +42,40 @@ export function getScopeSpecificProperties(
   }
   return element.viewportOverrides[scope] || {};
 }
+
+/**
+ * Applies a scope-specific property patch to an element and returns a new TemplateElement.
+ */
+export function applyScopePatchToElement(
+  element: TemplateElement,
+  scope: ViewportScope,
+  patch: Partial<ElementProperties>
+): TemplateElement {
+  if (scope === 'all') {
+    return {
+      ...element,
+      baseProperties: {
+        content: { ...element.baseProperties.content, ...patch.content },
+        style: { ...element.baseProperties.style, ...patch.style },
+        size: { ...element.baseProperties.size, ...patch.size },
+        layout: { ...element.baseProperties.layout, ...patch.layout },
+      },
+    };
+  }
+
+  const existingOverride = element.viewportOverrides[scope] || {};
+  const updatedOverride = {
+    content: { ...existingOverride.content, ...patch.content },
+    style: { ...existingOverride.style, ...patch.style },
+    size: { ...existingOverride.size, ...patch.size },
+    layout: { ...existingOverride.layout, ...patch.layout },
+  };
+
+  return {
+    ...element,
+    viewportOverrides: {
+      ...element.viewportOverrides,
+      [scope]: updatedOverride,
+    },
+  };
+}
