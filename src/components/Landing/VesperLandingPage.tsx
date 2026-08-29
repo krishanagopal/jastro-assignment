@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { TRIAL_STARTER_TEMPLATES } from '../../data/starterTemplates';
+import { TemplateTreeRenderer } from '../TemplateRenderer/TemplateTreeRenderer';
+import { loadPersistedTemplate } from '../../utils/templatePersistence';
 
 interface VesperLandingPageProps {
   onGoToEditor: () => void;
+  onGoToTemplates?: () => void;
 }
 
-export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEditor }) => {
+export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({
+  onGoToEditor,
+  onGoToTemplates,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [showcaseTemplateId, setShowcaseTemplateId] = useState<'apex-ai-workflows' | 'flowith-automation'>('apex-ai-workflows');
+  const [showcaseViewport, setShowcaseViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   useEffect(() => {
-    document.title = 'Vesper.ai — Operational AI Infrastructure';
+    document.title = 'Vesper.ai — AI-Powered Visual Website Builder';
 
     const timer = setTimeout(() => {
       const appears = document.querySelectorAll('.appear, .hero-photo, .hero-video');
@@ -20,6 +30,77 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
     return () => clearTimeout(timer);
   }, []);
 
+  const handleTemplatesNav = () => {
+    if (onGoToTemplates) {
+      onGoToTemplates();
+    } else {
+      onGoToEditor();
+    }
+  };
+
+  const handleHowItWorksClick = () => {
+    const el = document.getElementById('how-it-works');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleBenefitsClick = () => {
+    const el = document.getElementById('benefits');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handlePricingClick = () => {
+    const el = document.getElementById('pricing');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleFaqsClick = () => {
+    const el = document.getElementById('faqs');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex((prev) => (prev === index ? null : index));
+  };
+
+  const faqItems = [
+    {
+      q: 'What is Vesper.ai?',
+      a: 'Vesper.ai is an AI-powered visual website and landing-page builder that lets you select starter templates, customize content, typography, colors, layout, and spacing visually, preview responsively across devices, save changes persistently, and export or publish your site.',
+    },
+    {
+      q: 'Do I need coding experience to use Vesper.ai?',
+      a: 'No coding experience is required! You can customize every property using visual controls in the Property Panel. If you are a developer, you can also view and inspect the exact JSON code representation via the Code Surface.',
+    },
+    {
+      q: 'Can I customize colors and typography?',
+      a: 'Yes! Vesper.ai provides dedicated controls for typography (font family, weight, size, line height, letter spacing, alignment, transform, italic, text decoration) and colors (background color, text color, border color, custom HEX, RGB, and RGBA values).',
+    },
+    {
+      q: 'Does it support responsive mobile & tablet editing?',
+      a: 'Yes. You can switch between Desktop (1200px), Tablet (768px), and Mobile (375px) viewports with isolated viewport property overrides.',
+    },
+    {
+      q: 'Can I save my changes persistently?',
+      a: 'Yes! Clicking "Save Changes" persists your customized canonical template model to storage so your edits survive page refreshes and application reopens.',
+    },
+    {
+      q: 'Can I reset a template back to its original design?',
+      a: 'Yes. Every template features a safe "Reset Template" action that removes saved customizations and restores the original untouched starter seed.',
+    },
+    {
+      q: 'How many templates are available in the trial version?',
+      a: 'The trial version includes exactly two professionally designed starter templates: ApexAI Workflows (dark futuristic AI design) and Flowith Automation (light enterprise design).',
+    },
+  ];
+
   return (
     <div className={`vesper-root ${isMenuOpen ? 'menu-open' : ''}`}>
       {/* Base CSS & Tokens */}
@@ -29,7 +110,8 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
         html, body {
           background: #000000 !important;
           color: #ffffff !important;
-          overflow: hidden !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
           margin: 0;
           padding: 0;
         }
@@ -37,14 +119,13 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
         .vesper-root {
           background: #000000 !important;
           color: #ffffff;
-          height: 100vh;
-          height: 100dvh;
+          min-height: 100vh;
           width: 100vw;
           font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           text-rendering: optimizeLegibility;
-          overflow: hidden;
+          overflow-x: hidden;
           position: relative;
           box-sizing: border-box;
 
@@ -63,14 +144,14 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           --hero-btn-h: 42px;
           --h1: 58px;
           --lede: 14.5px;
-          --badge: 12px;
+          --badge: 11px;
           --stat-size: 13.5px;
           --header-y: 22px;
           --header-x: 48px;
           --stats-x: 72px;
           --stats-y: 28px;
           --copy-max: 960px;
-          --lede-max: 480px;
+          --lede-max: 520px;
         }
 
         .vesper-root *, .vesper-root *::before, .vesper-root *::after {
@@ -81,7 +162,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
 
         /* Grain Overlay */
         .vesper-root .grain {
-          position: absolute;
+          position: fixed;
           inset: 0;
           z-index: 100;
           pointer-events: none;
@@ -91,7 +172,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
 
         /* Full Viewport Particle Wave Video Background */
         .vesper-root .hero-video {
-          position: absolute;
+          position: fixed;
           inset: 0;
           width: 100%;
           height: 100%;
@@ -101,7 +182,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           pointer-events: none;
         }
 
-        .vesper-root .page {
+        .vesper-root .page-hero {
           position: relative;
           z-index: 2;
           display: flex;
@@ -109,6 +190,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           justify-content: space-between;
           height: 100vh;
           height: 100dvh;
+          min-height: 100vh;
         }
 
         /* Header Bar at Top */
@@ -148,155 +230,73 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           justify-self: center;
         }
 
-        /* Compact Liquid Metal Nav Pills */
         .vesper-root .nav-link {
-          height: var(--nav-h);
-          padding: 0 14px;
-          border-radius: 6px;
-          overflow: hidden;
-          position: relative;
-          border: 1px solid rgba(198,198,198,0.45);
-          background: linear-gradient(105deg, rgba(5,5,5,0.75) 0%, rgba(42,42,42,0.75) 48%, rgba(74,74,74,0.75) 100%);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          color: #f3f3f3;
+          background: transparent;
+          border: none;
+          color: var(--muted);
           font-size: var(--nav);
-          font-weight: 350;
-          letter-spacing: -0.01em;
-          white-space: nowrap;
-          display: inline-flex;
-          align-items: center;
-          text-decoration: none;
-          transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+          font-family: inherit;
+          font-weight: 400;
+          padding: 6px 12px;
+          border-radius: 6px;
           cursor: pointer;
-        }
-
-        .vesper-root .nav-link::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.16) 50%, transparent 70%);
-          transform: translateX(-120%);
-          transition: transform 0.6s ease;
-        }
-
-        .vesper-root .nav-link:hover::before {
-          transform: translateX(120%);
+          transition: color 0.2s, background 0.2s;
         }
 
         .vesper-root .nav-link:hover {
-          border-color: rgba(235,235,235,0.9);
-          background: linear-gradient(105deg, rgba(17,17,17,0.85) 0%, rgba(58,58,58,0.85) 45%, rgba(106,106,106,0.85) 100%);
-          box-shadow: 0 0 18px rgba(200,210,230,0.18);
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.08);
         }
 
-        .vesper-root .header-cta {
+        .vesper-root .header-actions {
           justify-self: end;
-          height: var(--btn-h);
-          padding: 0 14px;
-          font-size: var(--btn);
-        }
-
-        /* Burger Menu Button */
-        .vesper-root .burger {
-          display: none;
-          width: 42px;
-          height: 42px;
-          border-radius: 6px;
-          border: 1px solid var(--border);
-          background: rgba(8,8,8,0.55);
-          z-index: 60;
-          cursor: pointer;
-          flex-direction: column;
+          display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 5px;
-          transition: border-color 0.25s, background 0.25s;
+          gap: 10px;
         }
 
-        .vesper-root .burger span {
-          width: 16px;
-          height: 1.5px;
-          background: #ffffff;
-          border-radius: 1px;
-          transition: transform 0.25s, opacity 0.2s;
-        }
-
-        .vesper-root .burger:hover {
-          border-color: rgba(255,255,255,0.32);
-          background: rgba(255,255,255,0.05);
-        }
-
-        .vesper-root.menu-open .burger span:nth-child(1) {
-          transform: translateY(6.5px) rotate(45deg);
-        }
-        .vesper-root.menu-open .burger span:nth-child(2) {
-          opacity: 0;
-        }
-        .vesper-root.menu-open .burger span:nth-child(3) {
-          transform: translateY(-6.5px) rotate(-45deg);
-        }
-
-        /* Buttons (Liquid Glass) */
         .vesper-root .btn {
-          position: relative;
-          isolation: isolate;
-          overflow: hidden;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          height: var(--btn-h);
-          padding: 0 16px;
-          border-radius: 6px;
-          font-size: var(--btn);
-          font-weight: 450;
-          letter-spacing: -0.015em;
-          text-decoration: none;
+          gap: 7px;
+          font-family: inherit;
+          font-weight: 500;
           cursor: pointer;
+          transition: all 0.2s ease;
+          text-decoration: none;
           white-space: nowrap;
-          border: 1px solid transparent;
-          transition: transform 0.25s cubic-bezier(0.2,0.8,0.2,1), border-color 0.3s, background 0.3s, box-shadow 0.3s;
-        }
-
-        .vesper-root .btn::after {
-          content: "";
-          position: absolute;
-          inset: -1px;
-          border-radius: inherit;
-          pointer-events: none;
-          background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 40%, rgba(255,255,255,0.08) 100%);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask-composite: exclude;
-          -webkit-mask-composite: destination-out;
         }
 
         .vesper-root .btn-solid {
-          background: linear-gradient(180deg, #ffffff 0%, #e7e7e7 48%, #cfcfcf 100%);
-          color: #050505;
-          font-weight: 500;
-          border-color: rgba(255,255,255,0.9);
-          box-shadow: 0 4px 20px rgba(255,255,255,0.15);
+          background: #ffffff;
+          color: #000000;
+          border: 1px solid #ffffff;
+          padding: 0 18px;
+          height: var(--btn-h);
+          font-size: var(--btn);
+          border-radius: 999px;
+          font-weight: 600;
         }
 
         .vesper-root .btn-solid:hover {
-          transform: translateY(-1px);
-          background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 48%, #dfdfdf 100%);
-          box-shadow: 0 6px 24px rgba(255,255,255,0.22);
+          background: #e6e6e6;
+          border-color: #e6e6e6;
         }
 
         .vesper-root .btn-ghost {
-          background: rgba(12,12,12,0.65);
-          color: #efefef;
-          border-color: var(--border);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.06);
+          color: #ffffff;
+          border: 1px solid var(--border);
+          padding: 0 16px;
+          height: var(--btn-h);
+          font-size: var(--btn);
+          border-radius: 10px;
         }
 
         .vesper-root .btn-ghost:hover {
-          transform: translateY(-1px);
-          background: rgba(24,24,24,0.85);
-          border-color: rgba(255,255,255,0.32);
-          color: #ffffff;
+          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(255, 255, 255, 0.3);
         }
 
         /* Hero Lower Middle Vertical Position */
@@ -307,7 +307,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           align-items: center;
           justify-content: flex-end;
           text-align: center;
-          padding: 0 24px 28px;
+          padding: 0 24px 32px;
         }
 
         .vesper-root .hero-copy {
@@ -315,6 +315,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           display: flex;
           flex-direction: column;
           align-items: center;
+          margin-top: 110px;
         }
 
         .vesper-root .badge {
@@ -329,15 +330,16 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
           font-size: var(--badge);
-          font-weight: 350;
-          letter-spacing: -0.01em;
+          font-weight: 600;
+          letter-spacing: 0.04em;
           color: rgba(255,255,255,0.9);
           margin-bottom: 22px;
+          text-transform: uppercase;
         }
 
         .vesper-root h1 {
           font-size: var(--h1);
-          font-weight: 400;
+          font-weight: 500;
           line-height: 1.06;
           letter-spacing: -0.04em;
           color: #ffffff;
@@ -389,7 +391,7 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
         .vesper-root .stat {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 9px;
           font-size: var(--stat-size);
           color: var(--stat);
           letter-spacing: -0.015em;
@@ -397,17 +399,178 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           font-weight: 350;
         }
 
+        /* Sections Below Hero */
+        .vesper-root .content-section {
+          position: relative;
+          z-index: 10;
+          padding: 100px 48px 120px;
+          border-top: 1px solid var(--border-soft);
+          background: rgba(5, 5, 5, 0.95);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Floating Showcase Section (No separate background box) */
+        .vesper-root #showcase {
+          background: transparent !important;
+          border-top: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          padding-top: 60px;
+          padding-bottom: 100px;
+        }
+
+        .vesper-root .section-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .vesper-root .section-title {
+          font-size: 34px;
+          font-weight: 500;
+          letter-spacing: -0.03em;
+          color: #ffffff;
+          margin-bottom: 14px;
+        }
+
+        .vesper-root .section-subtitle {
+          font-size: 14.5px;
+          color: var(--muted);
+          max-width: 580px;
+          line-height: 1.6;
+          margin-bottom: 56px;
+          font-weight: 350;
+        }
+
+        .vesper-root .steps-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 24px;
+          width: 100%;
+          text-align: left;
+        }
+
+        .vesper-root .step-card {
+          background: rgba(15, 15, 15, 0.85);
+          border: 1px solid var(--border-soft);
+          border-radius: 16px;
+          padding: 32px 24px;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: border-color 0.25s, transform 0.25s;
+        }
+
+        .vesper-root .step-card:hover {
+          border-color: rgba(255, 255, 255, 0.35);
+          transform: translateY(-3px);
+        }
+
+        .vesper-root .step-num {
+          font-family: monospace;
+          font-size: 26px;
+          font-weight: 700;
+          color: #666666;
+          margin-bottom: 16px;
+        }
+
+        .vesper-root .step-title {
+          font-size: 17px;
+          font-weight: 600;
+          color: #ffffff;
+          margin-bottom: 10px;
+        }
+
+        .vesper-root .step-desc {
+          font-size: 13.5px;
+          color: var(--muted);
+          line-height: 1.6;
+        }
+
+        /* FAQ Accordion Item */
+        .vesper-root .faq-item {
+          width: 100%;
+          max-width: 800px;
+          background: rgba(15, 15, 15, 0.85);
+          border: 1px solid var(--border-soft);
+          border-radius: 12px;
+          overflow: hidden;
+          margin-bottom: 12px;
+          text-align: left;
+        }
+
+        .vesper-root .faq-btn {
+          width: 100%;
+          padding: 20px 24px;
+          background: transparent;
+          border: none;
+          color: #ffffff;
+          font-family: inherit;
+          font-size: 15px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+        }
+
+        .vesper-root .faq-ans {
+          padding: 0 24px 20px;
+          font-size: 13.5px;
+          color: var(--muted);
+          line-height: 1.6;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          padding-top: 14px;
+        }
+
+        /* Footer */
+        .vesper-root .footer {
+          position: relative;
+          z-index: 10;
+          border-top: 1px solid var(--border-soft);
+          padding: 48px var(--header-x) 32px;
+          background: rgba(2, 2, 2, 0.98);
+          font-size: 12px;
+          color: #777777;
+        }
+
         /* Appear Animation Utility */
         .vesper-root .appear {
           opacity: 0;
           transform: translateY(12px);
           transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-          transition-delay: var(--d, 0s);
         }
 
         .vesper-root .appear.is-in {
           opacity: 1;
           transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+          .vesper-root .header {
+            padding: 16px 20px;
+            grid-template-columns: 1fr auto;
+          }
+          .vesper-root #site-nav {
+            display: none;
+          }
+          .vesper-root .header-actions {
+            display: none;
+          }
+          .vesper-root h1 {
+            font-size: 38px;
+          }
+          .vesper-root .stats {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+          }
+          .vesper-root .content-section {
+            padding: 60px 24px 80px;
+          }
         }
       `}</style>
 
@@ -427,9 +590,11 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
         />
       </video>
 
-      <div className="page">
+      {/* FRONT HERO PAGE VIEWPORT (UNTOUCHED 100VH VIEWPORT) */}
+      <div className="page-hero">
+        {/* HEADER NAVBAR */}
         <header className="header">
-          <div className="logo appear is-in" aria-label="Vesper.ai">
+          <div className="logo appear is-in" onClick={onGoToEditor} aria-label="Vesper.ai">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <g transform="rotate(-30 12 12)">
                 <circle cx="7.3" cy="3.2" r="1.45" />
@@ -442,115 +607,460 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({ onGoToEdit
           </div>
 
           <nav id="site-nav" aria-label="Primary">
-            <button onClick={onGoToEditor} className="nav-link appear is-in">Benefits</button>
-            <button onClick={onGoToEditor} className="nav-link appear is-in">How It Works</button>
-            <button onClick={onGoToEditor} className="nav-link appear is-in">FAQs</button>
-            <button onClick={onGoToEditor} className="nav-link appear is-in">Pricing</button>
+            <button onClick={handleBenefitsClick} className="nav-link appear is-in">Benefits</button>
+            <button onClick={handleHowItWorksClick} className="nav-link appear is-in">How It Works</button>
+            <button onClick={handleTemplatesNav} className="nav-link appear is-in">Templates</button>
+            <button onClick={handlePricingClick} className="nav-link appear is-in">Pricing</button>
+            <button onClick={handleFaqsClick} className="nav-link appear is-in">FAQs</button>
           </nav>
 
-          {/* Header CTA: Start for Free */}
-          <button
-            onClick={onGoToEditor}
-            className="btn btn-solid header-cta appear is-in"
-          >
-            Start for Free
-          </button>
-
-          <button
-            className="burger appear is-in"
-            aria-controls="site-nav"
-            aria-expanded={isMenuOpen}
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          <div className="header-actions appear is-in">
+            <button onClick={handleTemplatesNav} className="btn btn-ghost">
+              Explore Templates
+            </button>
+            <button onClick={onGoToEditor} className="btn btn-solid">
+              <span>Start Building</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </header>
 
+        {/* HERO MAIN CONTENT */}
         <main className="hero">
           <div className="hero-copy">
+            {/* Centered Floating Pill Badge */}
             <div className="badge appear is-in">
-              <svg className="badge-star" width="18" height="20" viewBox="0 0 24 24" fill="white">
+              <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
                 <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
               </svg>
-              <span>Operational AI Infrastructure</span>
+              <span>AI-POWERED VISUAL WEBSITE BUILDER</span>
             </div>
 
-            <h1>
-              Train <em>AI agents</em> on your<br />
-              workflows in minutes.
+            {/* H1 Headline with Instrument Serif Italic Accent */}
+            <h1 className="appear is-in">
+              Build Websites Visually.<br />
+              Customize <em>every detail.</em>
             </h1>
 
+            {/* Subtitle / Lede Text */}
             <p className="lede appear is-in">
-              Deploy adaptive AI agents that learn, execute, and scale operational tasks across your business.
+              Start with a professional template, customize content, typography, colors, layout, and spacing visually, preview responsively across devices, save changes, and publish when ready.
             </p>
 
+            {/* Hero Actions Row */}
             <div className="hero-actions">
-              {/* Primary Action Button: Start for Free */}
               <button
                 onClick={onGoToEditor}
                 className="btn btn-solid hero-btn appear is-in"
               >
-                Start for Free
+                <span>Start Building Now</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
               </button>
 
               <button
-                onClick={onGoToEditor}
+                onClick={handleTemplatesNav}
                 className="btn btn-ghost hero-btn appear is-in"
               >
-                See it in action
+                Explore 2 Starter Templates
               </button>
             </div>
           </div>
         </main>
 
+        {/* BOTTOM STATS FOOTER ROW */}
         <footer className="stats">
           <div className="stat appear is-in">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <defs>
-                <linearGradient id="grad1" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.38"/>
-                  <stop offset="100%" stopColor="#3a3a3a" stopOpacity="0.62"/>
-                </linearGradient>
-                <linearGradient id="grad2" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#3a3a3a" stopOpacity="0.38"/>
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.62"/>
-                </linearGradient>
-              </defs>
-              <rect x="3.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#grad1)"/>
-              <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#grad2)"/>
-              <rect x="9.2" y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a"/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
             </svg>
-            <span>4.2M+ workflows automated</span>
+            <span>2 Starter Templates (ApexAI & Flowith)</span>
           </div>
 
           <div className="stat appear is-in">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <rect x="2.4" y="2.4" width="19.2" height="19.2" rx="6.2" fill="#ffffff"/>
-              <path d="M12 7.1v7.4M8.15 12.35L12 16.2l3.85-3.85" stroke="#111" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v8M8 12h8" />
             </svg>
-            <span>92% reduction in manual operations</span>
+            <span>100% Visual Style & Typography Control</span>
           </div>
 
           <div className="stat appear is-in">
-            <svg width="38" height="21" viewBox="0 0 40 22" className="stat-icon-wide">
-              <circle cx="10.2" cy="11" r="9.2" fill="#2b2b2b"/>
-              <ellipse cx="10.2" cy="12.1" rx="4.15" ry="3.7" fill="#f4f4f4"/>
-              <circle cx="8.8" cy="11" r="0.7" fill="#1a1a1a"/>
-              <circle cx="11.6" cy="11" r="0.7" fill="#1a1a1a"/>
-              <circle cx="20.2" cy="11" r="9.2" fill="#ffffff"/>
-              <circle cx="17.8" cy="10" r="1.7" fill="#111111"/>
-              <circle cx="22.6" cy="10" r="1.7" fill="#111111"/>
-              <path d="M17.5 14c1.2 1.2 4.2 1.2 5.4 0" stroke="#111" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-              <circle cx="30.2" cy="11" r="9.2" fill="#f26b1d"/>
-              <text x="30.2" y="15.1" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="12.5" fill="#ffffff" textAnchor="middle">e</text>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
             </svg>
-            <span>180+ operational teams onboarded</span>
+            <span>Desktop, Tablet & Mobile Responsive</span>
           </div>
         </footer>
       </div>
+
+      {/* SHOWCASE SECTION FLOATING OVER MAIN PAGE BACKGROUND */}
+      <section id="showcase" className="content-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="section-container" style={{ position: 'relative', zIndex: 5 }}>
+          {/* Monochromatic Pill Badge */}
+          <div className="badge appear is-in" style={{ marginBottom: 16 }}>
+            <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+            </svg>
+            <span>LIVE EDITOR PREVIEW</span>
+          </div>
+
+          {/* Headline matching first section theme (Instrument Serif Italic Accent) */}
+          <h2 className="section-title appear is-in" style={{ fontSize: 44, fontWeight: 500, lineHeight: 1.12, letterSpacing: '-0.04em', color: '#ffffff' }}>
+            Powerful Visual Editor.<br />
+            <em style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic', fontWeight: 300, color: '#a3a3a3' }}>
+              Unlimited possibilities.
+            </em>
+          </h2>
+
+          {/* Subtitle */}
+          <p className="section-subtitle appear is-in" style={{ fontSize: 16, color: '#d8d8d8', maxWidth: 640, marginTop: 12, marginBottom: 44, fontWeight: 350 }}>
+            Design, customize, and publish stunning websites with our intuitive drag-and-drop editor and advanced design controls.
+          </p>
+
+          {/* High Resolution Mockup Display Container */}
+          <div
+            className="appear is-in"
+            style={{
+              position: 'relative',
+              zIndex: 5,
+              width: '100%',
+              maxWidth: 1160,
+              margin: '0 auto',
+              borderRadius: 20,
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              background: 'transparent',
+              boxShadow: '0 40px 120px rgba(0, 0, 0, 0.95), 0 0 50px rgba(255, 255, 255, 0.08)',
+              overflow: 'hidden',
+              textAlign: 'left',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+            }}
+            onClick={onGoToEditor}
+          >
+            <img
+              src="/editor-showcase.png"
+              alt="Vesper.ai Powerful Visual Editor Showcase"
+              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 20 }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION BELOW HERO */}
+      <section id="how-it-works" className="content-section">
+        <div className="section-container">
+          <div className="badge appear is-in" style={{ marginBottom: 14 }}>
+            <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+            </svg>
+            <span>WORKFLOW</span>
+          </div>
+
+          <h2 className="section-title appear is-in">
+            From Starter Template to Live Website in 4 Steps
+          </h2>
+          <p className="section-subtitle appear is-in">
+            Our intuitive visual workflow takes you from initial template selection to a fully customized, responsive website.
+          </p>
+
+          <div className="steps-grid">
+            <div className="step-card appear is-in">
+              <div className="step-num">01</div>
+              <h3 className="step-title">Choose a Template</h3>
+              <p className="step-desc">
+                Start with dark futuristic ApexAI Workflows or light clean Flowith Automation starter templates.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <div className="step-num">02</div>
+              <h3 className="step-title">Customize Content & Style</h3>
+              <p className="step-desc">
+                Select elements on canvas and edit content, typography weights, custom colors, layout, and padding.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <div className="step-num">03</div>
+              <h3 className="step-title">Preview Across Devices</h3>
+              <p className="step-desc">
+                Test your responsive layout seamlessly across Desktop (1200px), Tablet (768px), and Mobile (375px).
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <div className="step-num">04</div>
+              <h3 className="step-title">Save & Publish</h3>
+              <p className="step-desc">
+                Persist your customized template model to storage, review revision history, and export your site.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS SECTION BELOW HOW IT WORKS */}
+      <section id="benefits" className="content-section">
+        <div className="section-container">
+          <div className="badge appear is-in" style={{ marginBottom: 14 }}>
+            <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+            </svg>
+            <span>CORE CAPABILITIES</span>
+          </div>
+
+          <h2 className="section-title appear is-in">
+            Everything You Need to Build Your Website
+          </h2>
+          <p className="section-subtitle appear is-in">
+            A complete suite of visual editing, styling, responsive previewing, persistent saving, and AI assistance built directly into one application.
+          </p>
+
+          <div className="steps-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>Visual Element Editing</h3>
+              <p className="step-desc">
+                Select any headline, paragraph, button, or container directly on canvas to inspect and modify properties in real time.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>Advanced Typography Controls</h3>
+              <p className="step-desc">
+                Full control over font size, weight (100–900), line height, letter spacing, text alignment, transform, italic, and text decoration.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>Custom Colors & Theme Presets</h3>
+              <p className="step-desc">
+                Synchronized color pickers and HEX, RGB, RGBA inputs for background, text, and border colors with Quick Theme Presets.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>Multi-Viewport Responsive Viewports</h3>
+              <p className="step-desc">
+                Switch seamlessly between Desktop (1200px), Tablet (768px), and Mobile (375px) viewports with isolated property overrides.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>Save Changes & Revision History</h3>
+              <p className="step-desc">
+                Persistent template saving with dirty tracking (`isDirty`), unsaved changes modal protection, and single-element recovery.
+              </p>
+            </div>
+
+            <div className="step-card appear is-in">
+              <h3 className="step-title" style={{ fontSize: 18, marginBottom: 8 }}>AI-Assisted Proposals</h3>
+              <p className="step-desc">
+                Non-destructive AI proposal engine suggesting targeted content and design updates with independent accept/reject controls.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING SECTION BELOW BENEFITS */}
+      <section id="pricing" className="content-section">
+        <div className="section-container">
+          <div className="badge appear is-in" style={{ marginBottom: 14 }}>
+            <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+            </svg>
+            <span>PRICING PLANS</span>
+          </div>
+
+          <h2 className="section-title appear is-in">
+            Flexible Plans for Every Project
+          </h2>
+          <p className="section-subtitle appear is-in">
+            Choose the plan that fits your workflow. Upgrade or downgrade at any time.
+          </p>
+
+          <div className="steps-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', alignItems: 'stretch' }}>
+            {/* Starter Plan */}
+            <div className="step-card appear is-in" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '32px 24px' }}>
+              <div>
+                <div className="badge" style={{ marginBottom: 14, fontSize: 10 }}>STARTER / TRIAL</div>
+                <h3 className="step-title" style={{ fontSize: 22, marginBottom: 6 }}>Starter</h3>
+                <p className="step-desc" style={{ marginBottom: 20 }}>Perfect for exploring the visual editor and building your first project.</p>
+                <div style={{ fontSize: 32, fontWeight: 700, fontFamily: 'monospace', marginBottom: 24, color: '#ffffff' }}>
+                  $0 <span style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'sans-serif', fontWeight: 400 }}>/ month</span>
+                </div>
+
+                <div style={{ textAlign: 'left', marginBottom: 28, fontSize: 13, color: '#d0d0d0', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>2 Starter Templates (ApexAI & Flowith)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Visual Element Editing on Canvas</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Basic Typography & Style Controls</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Desktop, Tablet & Mobile Previews</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Persistent Template Save Changes</span>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={onGoToEditor} className="btn btn-ghost" style={{ width: '100%', height: 42, fontSize: 13.5 }}>
+                <span>Start Free Trial</span>
+              </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="step-card appear is-in" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '32px 24px', border: '2px solid #ffffff', background: 'rgba(25, 25, 25, 0.95)' }}>
+              <div>
+                <div className="badge" style={{ marginBottom: 14, fontSize: 10, background: '#ffffff', color: '#000000' }}>MOST POPULAR</div>
+                <h3 className="step-title" style={{ fontSize: 22, marginBottom: 6 }}>Pro Creator</h3>
+                <p className="step-desc" style={{ marginBottom: 20 }}>For creators, designers, and teams building production websites.</p>
+                <div style={{ fontSize: 32, fontWeight: 700, fontFamily: 'monospace', marginBottom: 24, color: '#ffffff' }}>
+                  $29 <span style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'sans-serif', fontWeight: 400 }}>/ month</span>
+                </div>
+
+                <div style={{ textAlign: 'left', marginBottom: 28, fontSize: 13, color: '#ffffff', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>All Starter Plan Features</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Advanced Typography (100–900 Weights)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Custom Colors (HEX, RGB, RGBA & Presets)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Single-Element Revision History & Recovery</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Non-Destructive AI Proposals Engine</span>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={onGoToEditor} className="btn btn-solid" style={{ width: '100%', height: 42, fontSize: 13.5 }}>
+                <span>Start Pro Plan</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Enterprise Plan */}
+            <div className="step-card appear is-in" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '32px 24px' }}>
+              <div>
+                <div className="badge" style={{ marginBottom: 14, fontSize: 10 }}>ENTERPRISE</div>
+                <h3 className="step-title" style={{ fontSize: 22, marginBottom: 6 }}>Enterprise</h3>
+                <p className="step-desc" style={{ marginBottom: 20 }}>For agencies and organizations needing custom starter seeds and team access.</p>
+                <div style={{ fontSize: 32, fontWeight: 700, fontFamily: 'monospace', marginBottom: 24, color: '#ffffff' }}>
+                  $79 <span style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'sans-serif', fontWeight: 400 }}>/ month</span>
+                </div>
+
+                <div style={{ textAlign: 'left', marginBottom: 28, fontSize: 13, color: '#d0d0d0', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>All Pro Creator Features</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Unlimited Starter Template Customization</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Isolated Responsive Overrides & Viewports</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>Full JSON Code Surface Synchronization</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>✓</span> <span>24/7 Priority Support & History Backup</span>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={onGoToEditor} className="btn btn-ghost" style={{ width: '100%', height: 42, fontSize: 13.5 }}>
+                <span>Contact Sales</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQS SECTION BELOW PRICING */}
+      <section id="faqs" className="content-section">
+        <div className="section-container">
+          <div className="badge appear is-in" style={{ marginBottom: 14 }}>
+            <svg className="badge-star" width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+            </svg>
+            <span>FREQUENTLY ASKED QUESTIONS</span>
+          </div>
+
+          <h2 className="section-title appear is-in">
+            Got Questions? We Have Answers.
+          </h2>
+          <p className="section-subtitle appear is-in">
+            Everything you need to know about Vesper.ai and the visual editor.
+          </p>
+
+          <div style={{ width: '100%', maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {faqItems.map((item, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div key={item.q} className="faq-item appear is-in">
+                  <button onClick={() => toggleFaq(index)} className="faq-btn">
+                    <span>{item.q}</span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.25s ease',
+                        flexShrink: 0,
+                        marginLeft: 12,
+                      }}
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                  {isOpen && (
+                    <div className="faq-ans">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="footer">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, color: '#ffffff', fontWeight: 600 }}>
+            <span>Vesper<span className="logo-suffix">.ai</span></span>
+            <span style={{ color: '#777777', fontWeight: 400 }}>— Visual Website Builder</span>
+          </div>
+          <div>
+            © 2026 VESPER.AI. All rights reserved. Powered by Advanced Visual Editor System.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

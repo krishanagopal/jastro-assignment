@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Laptop, Smartphone, Tablet } from 'lucide-react';
 import { StarterTemplate } from '../../data/starterTemplates';
 import { TemplateTreeRenderer } from '../TemplateRenderer/TemplateTreeRenderer';
+import { loadPersistedTemplate } from '../../utils/templatePersistence';
 
 interface FullTemplatePreviewPageProps {
   template: StarterTemplate;
@@ -13,6 +14,9 @@ export const FullTemplatePreviewPage: React.FC<FullTemplatePreviewPageProps> = (
   onBackToGallery,
 }) => {
   const [activeViewport, setActiveViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const savedModel = loadPersistedTemplate(template.id);
+  const activeTemplateModel = savedModel || template.templateModel;
+
   const pageKeys = Object.keys(template.pages);
   const [selectedPageId, setSelectedPageId] = useState<string>(pageKeys[0] || 'home');
 
@@ -28,7 +32,7 @@ export const FullTemplatePreviewPage: React.FC<FullTemplatePreviewPageProps> = (
   };
 
   const activePageObj = template.pages[selectedPageId] || template.pages.home;
-  const pageElements = activePageObj?.elements || template.templateModel.elements;
+  const pageElements = activeTemplateModel.elements || activePageObj?.elements;
 
   return (
     <div className="min-h-screen w-screen bg-[#050508] text-slate-100 font-sans flex flex-col selection:bg-[#2a2a32] selection:text-white relative overflow-x-hidden">

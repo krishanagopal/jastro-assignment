@@ -20,8 +20,8 @@ export const APEX_AI_WORKFLOWS_STARTER: StarterTemplate = {
   id: 'apex-ai-workflows',
   name: 'ApexAI Workflows',
   category: 'Single Page',
-  badge: 'DARK NEON AI',
-  description: 'Dark premium AI/futuristic operational landing page with glowing neon pills, dual CTAs, and automated workflow cards.',
+  badge: 'DARK MONOCHROME',
+  description: 'Dark premium black & grey operational landing page with silver accents, dual CTAs, and automated workflow cards.',
   pageCount: 1,
   templateModel: INITIAL_TEMPLATE,
   pages: {

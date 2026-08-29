@@ -7,7 +7,7 @@ describe('Global Editor Theme & Template Isolation Safety', () => {
   it('preserves canonical seed properties for ApexAI Workflows without modifications', () => {
     const navbar = INITIAL_TEMPLATE.elements['navbar-container'];
     expect(navbar).toBeDefined();
-    expect(navbar.baseProperties.style?.backgroundColor).toBe('#05070e');
+    expect(navbar.baseProperties.style?.backgroundColor).toBe('#0A0A0A');
     expect(navbar.baseProperties.style?.padding).toBe('14px 28px');
 
     const heroTitle = INITIAL_TEMPLATE.elements['hero-title'];
@@ -36,7 +36,7 @@ describe('Global Editor Theme & Template Isolation Safety', () => {
 
     const apexCta = INITIAL_TEMPLATE.elements['nav-cta-btn'];
     const resolvedApexProps = resolveElementProperties(apexCta, 'desktop');
-    expect(resolvedApexProps.style?.backgroundColor).toBe('#6366f1');
-    expect(resolvedApexProps.style?.color).toBe('#ffffff');
+    expect(resolvedApexProps.style?.backgroundColor).toBe('#F5F5F5');
+    expect(resolvedApexProps.style?.color).toBe('#050505');
   });
 });

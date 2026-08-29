@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  ArrowLeft,
   CheckCircle,
   ChevronDown,
   Code,
@@ -33,6 +34,7 @@ interface HeaderBarProps {
   isHistoryDrawerOpen: boolean;
   onOpenAiProposalsModal: () => void;
   onOpenTemplatesGallery: () => void;
+  onGoToLanding: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -42,6 +44,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isHistoryDrawerOpen,
   onOpenAiProposalsModal,
   onOpenTemplatesGallery,
+  onGoToLanding,
 }) => {
   const {
     activeViewport,
@@ -52,6 +55,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     resetToInitialState,
     addElement,
     loadStarterTemplate,
+    activeTemplateId,
+    isDirty,
+    saveCurrentTemplateChanges,
+    pendingSwitchTemplateId,
+    discardUnsavedChanges,
+    clearPendingSwitchTemplate,
+    selectActiveTemplate,
   } = useTemplateStore();
 
   // Dropdowns & Modals State
@@ -61,6 +71,24 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   const [isCollaboratorsOpen, setIsCollaboratorsOpen] = useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [activeInfoTooltip, setActiveInfoTooltip] = useState<string | null>(null);
+
+  const [pendingLeaveTarget, setPendingLeaveTarget] = useState<'landing' | 'gallery' | null>(null);
+
+  const handleBackClick = () => {
+    if (!isDirty) {
+      onGoToLanding();
+    } else {
+      setPendingLeaveTarget('landing');
+    }
+  };
+
+  const handleGalleryClick = () => {
+    if (!isDirty) {
+      onOpenTemplatesGallery();
+    } else {
+      setPendingLeaveTarget('gallery');
+    }
+  };
 
   const handleViewportSwitch = (viewport: 'desktop' | 'tablet' | 'mobile') => {
     setActiveViewport(viewport);
@@ -142,9 +170,20 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   };
 
   return (
-    <header className="w-full bg-[#050508]/90 backdrop-blur-xl border-b border-white/10 px-4 py-2.5 flex items-center justify-between gap-4 text-slate-100 select-none z-40 relative shadow-2xl">
+    <header className="w-full bg-[#050508]/90 backdrop-blur-xl border-b border-white/10 px-3 py-2 flex items-center justify-between gap-2 text-slate-100 select-none z-40 relative shadow-2xl overflow-x-auto">
       {/* Left Toolbar Tools (All Metallic Grey Icons) */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Back to Landing Page Button */}
+        <button
+          onClick={handleBackClick}
+          onMouseEnter={() => setActiveInfoTooltip('Back to Landing Page')}
+          onMouseLeave={() => setActiveInfoTooltip(null)}
+          className="flex items-center justify-center p-2 bg-[#171717] border border-[#333333] hover:border-[#555555] hover:bg-[#242424] text-neutral-200 hover:text-white rounded-lg shadow cursor-pointer transition-all shrink-0"
+          title="Back to Landing Page"
+        >
+          <ArrowLeft className="w-4 h-4 text-neutral-200" />
+        </button>
+
         {/* Canvas Dropdown Button */}
         <div className="relative">
           <button
@@ -209,14 +248,45 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 
         {/* Standalone Templates Button */}
         <button
-          onClick={onOpenTemplatesGallery}
+          onClick={handleGalleryClick}
           onMouseEnter={() => setActiveInfoTooltip('Starter Templates Gallery: Browse, preview, and load pre-built site templates.')}
           onMouseLeave={() => setActiveInfoTooltip(null)}
-          className="flex items-center gap-1.5 bg-[#171717] border border-[#333333] hover:border-[#555555] hover:bg-[#242424] px-3 py-1.5 rounded-lg text-xs font-bold text-neutral-200 shadow cursor-pointer transition-all"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            !activeTemplateId
+              ? 'bg-white text-black border border-white animate-pulse shadow-lg ring-2 ring-white/30 font-extrabold'
+              : 'bg-[#171717] border border-[#333333] hover:border-[#555555] hover:bg-[#242424] text-neutral-200 shadow'
+          }`}
         >
-          <Palette className="w-3.5 h-3.5 text-neutral-300" />
+          <Palette className={`w-3.5 h-3.5 ${!activeTemplateId ? 'text-black' : 'text-neutral-300'}`} />
           <span>Templates</span>
         </button>
+
+        {/* Save Changes Toolbar Button */}
+        {activeTemplateId && (
+          <button
+            onClick={saveCurrentTemplateChanges}
+            disabled={!isDirty}
+            onMouseEnter={() => setActiveInfoTooltip('Save Changes: Persist canonical template model to storage.')}
+            onMouseLeave={() => setActiveInfoTooltip(null)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              isDirty
+                ? 'bg-white text-black border border-white shadow-lg cursor-pointer hover:bg-neutral-200 active:scale-95'
+                : 'bg-[#141414] text-neutral-400 border border-[#2a2a2a] cursor-default'
+            }`}
+          >
+            {isDirty ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-black animate-ping shrink-0" />
+                <span>Save Changes</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Saved ✓</span>
+              </>
+            )}
+          </button>
+        )}
 
         {/* Quick Creation Toolbar */}
         <div className="flex items-center gap-1 bg-[#111111] border border-[#262626] p-1 rounded-lg">
@@ -247,20 +317,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             <Type className="w-3.5 h-3.5" />
           </button>
-          <button
-            onClick={handleAddButton}
-            onMouseEnter={() => setActiveInfoTooltip('Add Button: Inserts an interactive action button.')}
-            onMouseLeave={() => setActiveInfoTooltip(null)}
-            className="p-1.5 hover:bg-[#1F1F1F] rounded text-neutral-400 hover:text-white transition-colors"
-            title="Add Button Shape"
-          >
-            <Square className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
 
       {/* Center Site & Branch Badge + Viewport Selector */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 shrink-0">
         {/* Site Branch Badge */}
         <div className="relative">
           <button
@@ -354,7 +415,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         {/* Code Surface Toggle */}
         <button
           onClick={onToggleCodeSurface}
@@ -567,6 +628,65 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Unsaved Changes Navigation & Template Switching Protection Modal */}
+      {(Boolean(pendingLeaveTarget) || Boolean(pendingSwitchTemplateId)) && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0A0A0A] border border-[#262626] rounded-xl max-w-md w-full p-5 space-y-4 shadow-2xl text-slate-200">
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+              <Info className="w-4 h-4" />
+              <span>You have unsaved changes</span>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Your latest changes haven't been saved. What would you like to do?
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setPendingLeaveTarget(null);
+                  clearPendingSwitchTemplate();
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#171717] hover:bg-[#242424] text-neutral-300 border border-[#333333] transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const target = pendingLeaveTarget;
+                  setPendingLeaveTarget(null);
+                  discardUnsavedChanges();
+                  if (target === 'landing') {
+                    onGoToLanding();
+                  } else if (target === 'gallery') {
+                    onOpenTemplatesGallery();
+                  }
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-950/60 hover:bg-red-900/60 text-red-300 border border-red-800/40 transition-all cursor-pointer"
+              >
+                Discard & Leave
+              </button>
+              <button
+                onClick={() => {
+                  const target = pendingLeaveTarget;
+                  const switchId = pendingSwitchTemplateId;
+                  saveCurrentTemplateChanges();
+                  setPendingLeaveTarget(null);
+                  if (target === 'landing') {
+                    onGoToLanding();
+                  } else if (target === 'gallery') {
+                    onOpenTemplatesGallery();
+                  } else if (switchId) {
+                    selectActiveTemplate(switchId, true);
+                  }
+                }}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-white hover:bg-neutral-200 text-black border border-white transition-all cursor-pointer"
+              >
+                Save & Leave
+              </button>
             </div>
           </div>
         </div>

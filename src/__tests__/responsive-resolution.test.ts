@@ -45,11 +45,11 @@ describe('Responsive Resolution & Override Isolation', () => {
     expect(updatedElement.viewportOverrides.mobile?.style?.color).toBe('#ff0000');
 
     // Base color remains untouched
-    expect(updatedElement.baseProperties.style?.color).toBe('#ffffff');
+    expect(updatedElement.baseProperties.style?.color).toBe('#F5F5F5');
 
     // Desktop view resolution remains untouched
     const resolvedDesktop = resolveElementProperties(updatedElement, 'desktop');
-    expect(resolvedDesktop.style?.color).toBe('#ffffff');
+    expect(resolvedDesktop.style?.color).toBe('#F5F5F5');
 
     // Mobile view resolution reflects override
     const resolvedMobile = resolveElementProperties(updatedElement, 'mobile');

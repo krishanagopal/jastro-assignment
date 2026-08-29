@@ -14,10 +14,11 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       label: 'Navbar Header Bar',
       baseProperties: {
         style: {
-          backgroundColor: '#05070e',
+          backgroundColor: '#0A0A0A',
           padding: '14px 28px',
           borderRadius: '16px',
           display: 'flex',
+          borderColor: '#262626',
         },
         size: { width: '100%' },
         layout: { flexDirection: 'row', gap: '16px', order: 1 },
@@ -33,7 +34,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-container',
       baseProperties: {
         content: { badgeText: '⚡ ApexAI', text: 'WORKFLOWS' },
-        style: { color: '#ffffff', fontSize: '14px', backgroundColor: 'transparent' },
+        style: { color: '#F5F5F5', fontSize: '14px', backgroundColor: 'transparent' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -58,7 +59,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-nav-links',
       baseProperties: {
         content: { text: 'Features' },
-        style: { color: '#cbd5e1', fontSize: '13px', backgroundColor: 'transparent' },
+        style: { color: '#B0B0B0', fontSize: '13px', backgroundColor: 'transparent' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -70,7 +71,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-nav-links',
       baseProperties: {
         content: { text: 'Playground' },
-        style: { color: '#cbd5e1', fontSize: '13px', backgroundColor: 'transparent' },
+        style: { color: '#B0B0B0', fontSize: '13px', backgroundColor: 'transparent' },
         layout: { order: 2 },
       },
       viewportOverrides: {},
@@ -82,7 +83,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-nav-links',
       baseProperties: {
         content: { text: 'Pricing' },
-        style: { color: '#cbd5e1', fontSize: '13px', backgroundColor: 'transparent' },
+        style: { color: '#B0B0B0', fontSize: '13px', backgroundColor: 'transparent' },
         layout: { order: 3 },
       },
       viewportOverrides: {},
@@ -94,7 +95,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-nav-links',
       baseProperties: {
         content: { text: 'Wall of Love' },
-        style: { color: '#cbd5e1', fontSize: '13px', backgroundColor: 'transparent' },
+        style: { color: '#B0B0B0', fontSize: '13px', backgroundColor: 'transparent' },
         layout: { order: 4 },
       },
       viewportOverrides: {},
@@ -106,7 +107,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-nav-links',
       baseProperties: {
         content: { text: 'FAQ' },
-        style: { color: '#cbd5e1', fontSize: '13px', backgroundColor: 'transparent' },
+        style: { color: '#B0B0B0', fontSize: '13px', backgroundColor: 'transparent' },
         layout: { order: 5 },
       },
       viewportOverrides: {},
@@ -129,7 +130,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'navbar-actions',
       baseProperties: {
         content: { text: 'Get Started Free →' },
-        style: { backgroundColor: '#6366f1', color: '#ffffff', fontSize: '13px', padding: '8px 20px', borderRadius: '10px' },
+        style: { backgroundColor: '#F5F5F5', color: '#050505', fontSize: '13px', padding: '8px 20px', borderRadius: '10px', fontWeight: '600' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -158,7 +159,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'hero-section',
       baseProperties: {
         content: { badgeText: 'ApexAI 3.0 Released', text: '•   Autonomous Multi-Agent Engine   ›' },
-        style: { backgroundColor: '#090d16', color: '#93c5fd', fontSize: '12px', padding: '8px 18px', borderRadius: '9999px', textAlign: 'center' },
+        style: { backgroundColor: '#171717', color: '#B0B0B0', fontSize: '12px', padding: '8px 18px', borderRadius: '9999px', textAlign: 'center', borderColor: '#3A3A3A' },
         size: { width: 'auto', maxWidth: '460px' },
         layout: { order: 1 },
       },
@@ -171,7 +172,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'hero-section',
       baseProperties: {
         content: { text: 'Automate Complex Workflows with Autonomous AI Agents' },
-        style: { color: '#ffffff', fontSize: '48px', textAlign: 'center' },
+        style: { color: '#F5F5F5', fontSize: '48px', textAlign: 'center' },
         size: { maxWidth: '900px', width: '100%' },
         layout: { order: 2 },
       },
@@ -186,7 +187,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'hero-section',
       baseProperties: {
         content: { text: 'Deploy intelligent agent pipelines that connect your API stack, automate operations, and execute code in real-time. Zero boilerplate required.' },
-        style: { color: '#94a3b8', fontSize: '17px', textAlign: 'center' },
+        style: { color: '#B0B0B0', fontSize: '17px', textAlign: 'center' },
         size: { maxWidth: '680px', width: '100%' },
         layout: { order: 3 },
       },
@@ -214,7 +215,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'hero-cta-group',
       baseProperties: {
         content: { text: '⚡ Start 14-Day Free Trial' },
-        style: { backgroundColor: '#6366f1', color: '#ffffff', fontSize: '15px', padding: '14px 32px', borderRadius: '12px', textAlign: 'center' },
+        style: { backgroundColor: '#F5F5F5', color: '#050505', fontSize: '15px', padding: '14px 32px', borderRadius: '12px', textAlign: 'center', fontWeight: '600' },
         size: { width: 'auto' },
         layout: { order: 1 },
       },
@@ -229,7 +230,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'hero-cta-group',
       baseProperties: {
         content: { text: '▷ Try Live Simulator' },
-        style: { backgroundColor: '#0f172a', color: '#f8fafc', fontSize: '15px', padding: '14px 28px', borderRadius: '12px', textAlign: 'center' },
+        style: { backgroundColor: '#171717', color: '#F5F5F5', fontSize: '15px', padding: '14px 28px', borderRadius: '12px', textAlign: 'center', borderColor: '#3A3A3A' },
         size: { width: 'auto' },
         layout: { order: 2 },
       },
@@ -257,7 +258,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'trust-indicators-group',
       baseProperties: {
         content: { badgeText: 'SECURITY', text: '✔ SOC2 Type II Certified' },
-        style: { backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#808080', fontSize: '13px' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -269,7 +270,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'trust-indicators-group',
       baseProperties: {
         content: { badgeText: 'RELIABILITY', text: '⏱ 99.99% Guaranteed Uptime' },
-        style: { backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#808080', fontSize: '13px' },
         layout: { order: 2 },
       },
       viewportOverrides: {},
@@ -281,7 +282,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'trust-indicators-group',
       baseProperties: {
         content: { badgeText: 'NO RISK', text: '💳 No Credit Card Needed' },
-        style: { backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#808080', fontSize: '13px' },
         layout: { order: 3 },
       },
       viewportOverrides: {},
@@ -308,7 +309,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'workflow-section',
       baseProperties: {
         content: { text: 'Engineered for Autonomous Operation' },
-        style: { fontSize: '32px', color: '#ffffff', textAlign: 'center' },
+        style: { fontSize: '32px', color: '#F5F5F5', textAlign: 'center' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -320,7 +321,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'workflow-section',
       baseProperties: {
         content: { text: 'Connect your data pipelines, execution sandboxes, and stateful agent loops in minutes.' },
-        style: { fontSize: '15px', color: '#94a3b8', textAlign: 'center' },
+        style: { fontSize: '15px', color: '#B0B0B0', textAlign: 'center' },
         layout: { order: 2 },
       },
       viewportOverrides: {},
@@ -345,7 +346,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'workflow-cards-group',
       baseProperties: {
         content: { badgeText: 'QUALIFICATION', text: 'AI Lead Qualification: Connect intelligent agents to automatically qualify and prioritize sales leads.' },
-        style: { backgroundColor: '#0b0f19', color: '#e2e8f0', fontSize: '14px', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', fontSize: '14px', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 1 },
       },
@@ -358,7 +359,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'workflow-cards-group',
       baseProperties: {
         content: { badgeText: 'OPERATIONS', text: 'Autonomous Operations: Automate repetitive business workflows with deterministic multi-agent loops.' },
-        style: { backgroundColor: '#0b0f19', color: '#e2e8f0', fontSize: '14px', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', fontSize: '14px', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 2 },
       },
@@ -371,7 +372,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'workflow-cards-group',
       baseProperties: {
         content: { badgeText: 'INTELLIGENCE', text: 'Real-Time API Intelligence: Connect APIs, databases, and microservices through automated pipelines.' },
-        style: { backgroundColor: '#0b0f19', color: '#e2e8f0', fontSize: '14px', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', fontSize: '14px', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 3 },
       },
@@ -399,7 +400,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'features-section',
       baseProperties: {
         content: { text: 'Built for High-Scale Enterprise Workflows' },
-        style: { fontSize: '32px', color: '#ffffff', textAlign: 'center' },
+        style: { fontSize: '32px', color: '#F5F5F5', textAlign: 'center' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -411,7 +412,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'features-section',
       baseProperties: {
         content: { text: 'Everything you need to build, execute, and scale multi-agent operational systems.' },
-        style: { fontSize: '15px', color: '#94a3b8', textAlign: 'center' },
+        style: { fontSize: '15px', color: '#B0B0B0', textAlign: 'center' },
         layout: { order: 2 },
       },
       viewportOverrides: {},
@@ -436,7 +437,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'features-grid',
       baseProperties: {
         content: { badgeText: 'AGENTS', text: 'Autonomous Agents: Stateful multi-step reasoning with memory retention.' },
-        style: { backgroundColor: '#090c14', color: '#e2e8f0', padding: '20px', borderRadius: '12px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '20px', borderRadius: '12px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 1 },
       },
@@ -449,7 +450,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'features-grid',
       baseProperties: {
         content: { badgeText: 'APIS', text: 'API Integrations: Instant REST, GraphQL, and gRPC connection adapters.' },
-        style: { backgroundColor: '#090c14', color: '#e2e8f0', padding: '20px', borderRadius: '12px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '20px', borderRadius: '12px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 2 },
       },
@@ -462,7 +463,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'features-grid',
       baseProperties: {
         content: { badgeText: 'RUNTIME', text: 'Real-Time Execution: Sandboxed execution with sub-millisecond latency.' },
-        style: { backgroundColor: '#090c14', color: '#e2e8f0', padding: '20px', borderRadius: '12px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '20px', borderRadius: '12px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 3 },
       },
@@ -490,7 +491,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'how-it-works-section',
       baseProperties: {
         content: { text: 'How ApexAI Operates' },
-        style: { fontSize: '32px', color: '#ffffff', textAlign: 'center' },
+        style: { fontSize: '32px', color: '#F5F5F5', textAlign: 'center' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -515,7 +516,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'how-steps-container',
       baseProperties: {
         content: { badgeText: '01', text: 'Connect Your Systems: Plug in APIs, databases, and microservices.' },
-        style: { backgroundColor: '#0b0e17', color: '#e2e8f0', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 1 },
       },
@@ -528,7 +529,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'how-steps-container',
       baseProperties: {
         content: { badgeText: '02', text: 'Build Intelligent Workflows: Design agent pipelines visually or via code.' },
-        style: { backgroundColor: '#0b0e17', color: '#e2e8f0', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 2 },
       },
@@ -541,7 +542,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'how-steps-container',
       baseProperties: {
         content: { badgeText: '03', text: 'Deploy Autonomous Agents: Launch agents with zero boilerplate.' },
-        style: { backgroundColor: '#0b0e17', color: '#e2e8f0', padding: '24px', borderRadius: '14px' },
+        style: { backgroundColor: '#111111', color: '#B0B0B0', padding: '24px', borderRadius: '14px', borderColor: '#262626' },
         size: { width: '30%' },
         layout: { order: 3 },
       },
@@ -556,7 +557,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       type: 'section',
       label: 'Final Conversion CTA Section',
       baseProperties: {
-        style: { display: 'flex', padding: '56px 24px', backgroundColor: '#080c16', borderRadius: '24px' },
+        style: { display: 'flex', padding: '56px 24px', backgroundColor: '#0A0A0A', borderRadius: '24px', borderColor: '#262626' },
         size: { width: '100%', maxWidth: '900px' },
         layout: { flexDirection: 'column', gap: '20px', order: 6 },
       },
@@ -569,7 +570,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'product-cta-section',
       baseProperties: {
         content: { text: 'Ready to Automate Your Workflows?' },
-        style: { fontSize: '36px', color: '#ffffff', textAlign: 'center' },
+        style: { fontSize: '36px', color: '#F5F5F5', textAlign: 'center' },
         layout: { order: 1 },
       },
       viewportOverrides: {},
@@ -581,7 +582,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'product-cta-section',
       baseProperties: {
         content: { text: 'Build, deploy and scale intelligent AI-powered workflows without unnecessary complexity.' },
-        style: { fontSize: '16px', color: '#94a3b8', textAlign: 'center' },
+        style: { fontSize: '16px', color: '#B0B0B0', textAlign: 'center' },
         layout: { order: 2 },
       },
       viewportOverrides: {},
@@ -593,7 +594,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'product-cta-section',
       baseProperties: {
         content: { text: '⚡ Start Building for Free' },
-        style: { backgroundColor: '#6366f1', color: '#ffffff', fontSize: '15px', padding: '14px 32px', borderRadius: '12px' },
+        style: { backgroundColor: '#F5F5F5', color: '#050505', fontSize: '15px', padding: '14px 32px', borderRadius: '12px', fontWeight: '600' },
         size: { width: 'auto' },
         layout: { order: 3 },
       },
@@ -608,7 +609,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       type: 'section',
       label: 'Footer Section Wrapper',
       baseProperties: {
-        style: { display: 'flex', padding: '48px 24px 24px', backgroundColor: '#020306' },
+        style: { display: 'flex', padding: '48px 24px 24px', backgroundColor: '#050505' },
         size: { width: '100%', maxWidth: '1100px' },
         layout: { flexDirection: 'column', gap: '32px', order: 7 },
       },
@@ -634,7 +635,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'footer-content-group',
       baseProperties: {
         content: { badgeText: 'ApexAI', text: 'ApexAI Workflows: Operational multi-agent engine for intelligent business automation.' },
-        style: { backgroundColor: 'transparent', color: '#94a3b8', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#B0B0B0', fontSize: '13px' },
         size: { width: '35%' },
         layout: { order: 1 },
       },
@@ -647,7 +648,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'footer-content-group',
       baseProperties: {
         content: { badgeText: 'PRODUCT', text: 'Features • Integrations • Playground • Pricing' },
-        style: { backgroundColor: 'transparent', color: '#94a3b8', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#B0B0B0', fontSize: '13px' },
         size: { width: '20%' },
         layout: { order: 2 },
       },
@@ -660,7 +661,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'footer-content-group',
       baseProperties: {
         content: { badgeText: 'COMPANY', text: 'About Us • Careers • Contact • Security' },
-        style: { backgroundColor: 'transparent', color: '#94a3b8', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#B0B0B0', fontSize: '13px' },
         size: { width: '20%' },
         layout: { order: 3 },
       },
@@ -673,7 +674,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'footer-content-group',
       baseProperties: {
         content: { badgeText: 'RESOURCES', text: 'Documentation • API Reference • Help Center' },
-        style: { backgroundColor: 'transparent', color: '#94a3b8', fontSize: '13px' },
+        style: { backgroundColor: 'transparent', color: '#B0B0B0', fontSize: '13px' },
         size: { width: '20%' },
         layout: { order: 4 },
       },
@@ -686,7 +687,7 @@ export const INITIAL_TEMPLATE: TemplateModel = {
       parentId: 'footer-section',
       baseProperties: {
         content: { badgeText: 'APEXAI WORKFLOWS', text: '© 2026 ApexAI Workflows Inc. All rights reserved. • Privacy Policy • Terms of Service' },
-        style: { backgroundColor: 'transparent', color: '#64748b', fontSize: '12px', textAlign: 'center' },
+        style: { backgroundColor: 'transparent', color: '#808080', fontSize: '12px', textAlign: 'center' },
         layout: { order: 2 },
       },
       viewportOverrides: {},

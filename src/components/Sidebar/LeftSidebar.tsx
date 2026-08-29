@@ -7,6 +7,7 @@ import {
   Folder,
   FolderOpen,
   Frame,
+  Globe,
   Grid,
   Info,
   Layers,
@@ -205,7 +206,10 @@ export const LeftSidebar: React.FC = () => {
             <div className="flex items-center gap-2 truncate">
               <Grid className="w-4 h-4 text-neutral-400 shrink-0" />
               <div className="truncate">
-                <p className="text-xs font-semibold truncate">🌐 Preview Whole Website</p>
+                <p className="text-xs font-semibold truncate flex items-center gap-1">
+                  <Globe className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                  <span>Preview Whole Website</span>
+                </p>
                 <p className="text-[10px] font-mono text-neutral-400 truncate">All Pages View</p>
               </div>
             </div>

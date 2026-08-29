@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  ArrowUp,
   ChevronRight,
   Grid,
   Hand,
@@ -22,7 +23,7 @@ import { TemplateTreeRenderer } from '../TemplateRenderer/TemplateTreeRenderer';
 export type CanvasThemeTexture = 'wave' | 'slate' | 'grid' | 'cosmic' | 'checker';
 
 export const CanvasPreview: React.FC = () => {
-  const { canonicalTemplate, activeViewport, selectedElementIds, selectElement, pages, activePageId } = useTemplateStore();
+  const { canonicalTemplate, activeViewport, selectedElementIds, selectElement, pages, activePageId, activeTemplateId } = useTemplateStore();
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [activeTool, setActiveTool] = useState<'pointer' | 'hand'>('pointer');
   const [canvasTexture, setCanvasTexture] = useState<CanvasThemeTexture>('wave');
@@ -87,6 +88,33 @@ export const CanvasPreview: React.FC = () => {
   };
 
   const selectedElement = selectedElementIds.length > 0 ? canonicalTemplate.elements[selectedElementIds[0]] : null;
+
+  if (!activeTemplateId) {
+    return (
+      <main className="flex-1 min-w-0 min-h-0 flex flex-col items-center justify-center p-8 text-center bg-[#050505] relative overflow-hidden select-none z-20">
+        {/* Subtle animated callout pointing UP toward the Templates toolbar button */}
+        <div className="absolute top-6 left-32 flex flex-col items-center gap-1.5 animate-bounce z-30">
+          <div className="flex items-center gap-2 bg-[#171717] border border-[#3A3A3A] px-3.5 py-1.5 rounded-full text-xs font-mono font-bold text-white shadow-2xl">
+            <ArrowUp className="w-4 h-4 text-white shrink-0 animate-pulse" />
+            <span>Choose a Template to Start</span>
+          </div>
+          <div className="w-0.5 h-6 bg-gradient-to-b from-white to-transparent"></div>
+        </div>
+
+        <div className="max-w-md space-y-4 z-10 my-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[#111111] border border-[#262626] flex items-center justify-center mx-auto shadow-2xl">
+            <Palette className="w-8 h-8 text-neutral-400" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-white tracking-tight">Choose a Template to Start</h2>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Select one of the available templates to begin building and customizing your website.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -205,7 +233,7 @@ export const CanvasPreview: React.FC = () => {
           {/* Canvas Background Theme Texture Switcher */}
           <div className="relative">
             <button
-              onClick={() => setIsThemePickerOpen((prev) => !prev)}
+              onClick={() => setIsThemePickerOpen((prev: boolean) => !prev)}
               className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all font-semibold"
               title="Change Canvas Background Texture"
             >
@@ -280,7 +308,7 @@ export const CanvasPreview: React.FC = () => {
           <div className="h-4 w-px bg-white/10 mx-1"></div>
 
           <button
-            onClick={() => setZoomLevel((prev) => Math.max(50, prev - 10))}
+            onClick={() => setZoomLevel((prev: number) => Math.max(50, prev - 10))}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all"
             title="Zoom Out"
           >
@@ -290,8 +318,8 @@ export const CanvasPreview: React.FC = () => {
           <span className="font-mono text-xs text-slate-300 font-bold px-1">{zoomLevel}%</span>
 
           <button
-            onClick={() => setZoomLevel((prev) => Math.min(150, prev + 10))}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            onClick={() => setZoomLevel((prev: number) => Math.min(150, prev + 10))}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all font-semibold"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />

@@ -79,6 +79,7 @@ export const App: React.FC = () => {
           isHistoryDrawerOpen={isHistoryDrawerOpen}
           onOpenAiProposalsModal={() => setIsAiModalOpen(true)}
           onOpenTemplatesGallery={() => setCurrentPage('templates-gallery')}
+          onGoToLanding={() => setCurrentPage('landing')}
         />
       </div>
 
