@@ -124,7 +124,7 @@ export const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
 
                 {/* Side-by-Side Diff */}
                 {proposal.status !== 'invalid' && (
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     {/* Before */}
                     <div className="p-3 bg-slate-900/90 rounded-lg border border-slate-700/60">
                       <span className="block text-[10px] font-bold uppercase text-slate-400 mb-1">

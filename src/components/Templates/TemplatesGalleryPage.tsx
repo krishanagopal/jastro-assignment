@@ -44,31 +44,31 @@ export const TemplatesGalleryPage: React.FC<TemplatesGalleryPageProps> = ({
       </video>
 
       {/* Top Gallery Navigation Bar */}
-      <header className="w-full bg-[#0A0A0A]/95 backdrop-blur-xl border-b border-[#262626] px-6 py-4 flex items-center justify-between z-20 relative">
-        <div className="flex items-center gap-4">
+      <header className="w-full bg-[#0A0A0A]/95 backdrop-blur-xl border-b border-[#262626] px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 z-20 relative">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
           <button
             onClick={onBackToEditor}
-            className="flex items-center gap-2 bg-[#171717] hover:bg-[#242424] border border-[#333333] text-neutral-300 hover:text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow"
+            className="flex items-center gap-1.5 bg-[#171717] hover:bg-[#242424] border border-[#333333] text-neutral-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Editor</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Editor</span>
           </button>
-          <div className="h-5 w-px bg-[#262626]"></div>
+          <div className="h-4 w-px bg-[#262626] hidden sm:block"></div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-neutral-300" />
-            <h1 className="text-sm font-extrabold tracking-wide text-white font-mono">
+            <Sparkles className="w-4 h-4 text-neutral-300" />
+            <h1 className="text-xs sm:text-sm font-extrabold tracking-wide text-white font-mono">
               VESPER TEMPLATE GALLERY
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
           <button onClick={onGoToLanding} className="text-xs text-neutral-400 hover:text-white transition-colors">
             Landing Page
           </button>
           <button
             onClick={onBackToEditor}
-            className="bg-[#F5F5F5] hover:bg-[#D4D4D4] text-[#050505] font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg border border-white transition-all"
+            className="bg-[#F5F5F5] hover:bg-[#D4D4D4] text-[#050505] font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-lg border border-white transition-all"
           >
             Open Studio Editor
           </button>
@@ -76,13 +76,13 @@ export const TemplatesGalleryPage: React.FC<TemplatesGalleryPageProps> = ({
       </header>
 
       {/* Gallery Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 z-10 relative space-y-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 z-10 relative space-y-8">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="inline-block text-[11px] font-mono font-extrabold tracking-widest text-neutral-300 uppercase bg-[#171717] border border-[#3A3A3A] px-3.5 py-1 rounded-full">
+          <span className="inline-block text-[10px] sm:text-[11px] font-mono font-extrabold tracking-widest text-neutral-300 uppercase bg-[#171717] border border-[#3A3A3A] px-3 py-1 rounded-full">
             TRIAL VERSION • 2 PROFESSIONALLY DESIGNED TEMPLATES
           </span>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">Choose a Template to Start</h2>
-          <p className="text-sm text-neutral-400 leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Choose a Template to Start</h2>
+          <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
             Start with one of our professionally designed, fully editable website templates. Select any template to open it in the editor.
           </p>
         </div>
@@ -98,7 +98,7 @@ export const TemplatesGalleryPage: React.FC<TemplatesGalleryPageProps> = ({
             return (
               <div
                 key={tmpl.id}
-                className={`border rounded-2xl p-6 flex flex-col justify-between space-y-6 transition-all group shadow-2xl backdrop-blur-xl relative overflow-hidden ${
+                className={`border rounded-2xl p-4 sm:p-6 flex flex-col justify-between space-y-6 transition-all group shadow-2xl backdrop-blur-xl relative overflow-hidden ${
                   isDark
                     ? 'bg-[#070912]/95 border-indigo-500/40 hover:border-indigo-400'
                     : 'bg-[#fafcfb] border-emerald-500/40 hover:border-emerald-500 text-slate-900'
@@ -124,7 +124,7 @@ export const TemplatesGalleryPage: React.FC<TemplatesGalleryPageProps> = ({
                   </div>
 
                   <div>
-                    <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{tmpl.name}</h3>
+                    <h3 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{tmpl.name}</h3>
                     <p className={`text-xs leading-relaxed mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       {tmpl.description}
                     </p>
@@ -147,7 +147,7 @@ export const TemplatesGalleryPage: React.FC<TemplatesGalleryPageProps> = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3 pt-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-2">
                   <button
                     onClick={() => {
                       const updatedStarter = {

@@ -97,7 +97,7 @@ export const CodeSurface: React.FC<CodeSurfaceProps> = ({ isOpen, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[480px] z-50 glass-panel border-l border-slate-700/80 shadow-2xl flex flex-col text-slate-100 animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-y-0 right-0 w-full max-w-[480px] z-50 glass-panel border-l border-slate-700/80 shadow-2xl flex flex-col text-slate-100 animate-in slide-in-from-right duration-200">
       {/* Code Panel Header */}
       <div className="p-4 border-b border-slate-700/80 flex items-center justify-between bg-slate-900/90">
         <div className="flex items-center gap-2">

@@ -549,6 +549,23 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({
           transform: translateY(0);
         }
 
+        .vesper-root .mobile-menu-btn {
+          display: none;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid var(--border);
+          color: #ffffff;
+          padding: 6px 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 13px;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .vesper-root .mobile-nav-overlay {
+          display: none;
+        }
+
         @media (max-width: 768px) {
           .vesper-root .header {
             padding: 16px 20px;
@@ -560,8 +577,49 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({
           .vesper-root .header-actions {
             display: none;
           }
+          .vesper-root .mobile-menu-btn {
+            display: inline-flex;
+          }
+          .vesper-root .mobile-nav-overlay {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 12, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 20px;
+            z-index: 99;
+            gap: 12px;
+          }
+          .vesper-root .mobile-nav-overlay button {
+            text-align: left;
+            width: 100%;
+            padding: 10px 14px;
+          }
+          .vesper-root .page-hero {
+            min-height: 100dvh;
+            height: auto;
+          }
+          .vesper-root .hero {
+            padding: 20px 20px 32px;
+          }
+          .vesper-root .hero-copy {
+            margin-top: 40px;
+          }
           .vesper-root h1 {
-            font-size: 38px;
+            font-size: clamp(30px, 8vw, 48px);
+          }
+          .vesper-root .hero-actions {
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+          }
+          .vesper-root .hero-btn {
+            width: 100%;
           }
           .vesper-root .stats {
             flex-direction: column;
@@ -569,7 +627,10 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({
             padding: 20px;
           }
           .vesper-root .content-section {
-            padding: 60px 24px 80px;
+            padding: 60px 20px 80px;
+          }
+          .vesper-root .steps-grid {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
           }
         }
       `}</style>
@@ -625,7 +686,41 @@ export const VesperLandingPage: React.FC<VesperLandingPageProps> = ({
               </svg>
             </button>
           </div>
+
+          {/* Mobile Hamburger Toggle Button */}
+          <button
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="mobile-menu-btn"
+            aria-label="Toggle Menu"
+          >
+            <span>{isMenuOpen ? 'Close' : 'Menu'}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {isMenuOpen ? (
+                <path d="M18 6L6 18M6 6l12 12" />
+              ) : (
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </header>
+
+        {/* Mobile Navigation Drawer */}
+        {isMenuOpen && (
+          <div className="mobile-nav-overlay animate-in fade-in duration-150">
+            <button onClick={() => { setIsMenuOpen(false); handleBenefitsClick(); }} className="nav-link">Benefits</button>
+            <button onClick={() => { setIsMenuOpen(false); handleHowItWorksClick(); }} className="nav-link">How It Works</button>
+            <button onClick={() => { setIsMenuOpen(false); handleTemplatesNav(); }} className="nav-link">Templates</button>
+            <button onClick={() => { setIsMenuOpen(false); handlePricingClick(); }} className="nav-link">Pricing</button>
+            <button onClick={() => { setIsMenuOpen(false); handleFaqsClick(); }} className="nav-link">FAQs</button>
+            <div style={{ height: 1, background: 'var(--border-soft)', margin: '4px 0' }}></div>
+            <button onClick={() => { setIsMenuOpen(false); handleTemplatesNav(); }} className="btn btn-ghost" style={{ justifyContent: 'flex-start' }}>
+              Explore Templates
+            </button>
+            <button onClick={() => { setIsMenuOpen(false); onGoToEditor(); }} className="btn btn-solid" style={{ justifyContent: 'center' }}>
+              Start Building
+            </button>
+          </div>
+        )}
 
         {/* HERO MAIN CONTENT */}
         <main className="hero">
